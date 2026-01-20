@@ -12,13 +12,13 @@ export const colors = {
   danger: "#FF5C7C",
   success: "#38D39F",
 
-  inputBg: "rgba(255,255,255,0.04)",
-  inputBorder: "rgba(255,255,255,0.10)",
-  inputBorderFocus: "rgba(109,94,246,0.90)",
+  inputBg: "rgba(255, 255, 255, 0.04)",
+  inputBorder: "rgba(10, 10, 10, 0.77)",
+  inputBorderFocus: "#19fd00",
   inputBorderError: "rgba(255,92,124,0.95)",
 
   gradients: {
     background: ["#050814", "#071027", "#050814"] as const,
-    primary: ["#133d0e", "#140e0e"] as const,
+    primary: ["#19fd00", "#140e0e"] as const,
   },
 };

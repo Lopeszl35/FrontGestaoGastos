@@ -8,7 +8,6 @@ import {
   View,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { MaterialIcons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 import AuthBrandHeader from "../../../../shared/ui/components/branding/AuthBrandHeader";
 import type { AuthStackParamList } from "../../../../types/navigation";

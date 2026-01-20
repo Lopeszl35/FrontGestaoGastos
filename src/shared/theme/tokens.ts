@@ -1,4 +1,3 @@
-// src/shared/theme/tokens.ts
 export const spacing = {
   xs: 6,
   sm: 10,
@@ -13,49 +12,51 @@ export const typography = {
   weight: { regular: "400" as const, medium: "600" as const, bold: "700" as const },
 } as const;
 
+
 export const tokens = {
   radii: {
     sm: 12,
     md: 16,
-    lg: 20,
-    xl: 28,
+    lg: 24, // Aumentei um pouco para ficar mais arredondado/moderno (Apple Style)
+    xl: 32,
   },
 
   glow: {
-    primary: "rgba(66, 230, 138, 0.42)", 
-    secondary: "rgba(25, 160, 95, 0.30)",
-    soft: "rgba(255,255,255,0.10)",
-    danger: "rgba(255, 92, 124, 0.50)",
-    cyan: "rgba(3, 56, 7, 0.55)", 
+    // Ajustado para o novo Verde Neon do Dark Mode
+    primary: "rgba(34, 197, 94, 0.5)", 
+    secondary: "rgba(22, 163, 74, 0.3)",
+    soft: "rgba(255, 255, 255, 0.05)",
+    danger: "rgba(239, 68, 68, 0.4)",
+    cyan: "rgba(6, 182, 212, 0.5)", // Útil para elementos de IA/Futuristas
   },
 
   shadow: {
     card: {
       shadowColor: "#000",
-      shadowOpacity: 0.22,
+      shadowOpacity: 0.15, // Mais suave = mais sofisticado
       shadowRadius: 20,
-      shadowOffset: { width: 0, height: 12 },
-      elevation: 10,
+      shadowOffset: { width: 0, height: 8 },
+      elevation: 4,
     },
-      cardActive: {
-      shadowColor: "rgba(66, 230, 138, 0.60)", 
-      shadowOpacity: 0.28,
-      shadowRadius: 26,
-      shadowOffset: { width: 0, height: 16 },
-      elevation: 14,
+    cardActive: {
+      shadowColor: "#22C55E", // Glow verde ao selecionar
+      shadowOpacity: 0.25,
+      shadowRadius: 30,
+      shadowOffset: { width: 0, height: 0 }, // Centralizado
+      elevation: 10,
     },
     inputFocus: {
-      shadowColor: "rgba(66, 230, 138, 0.55)",
-      shadowOpacity: 0.22,
-      shadowRadius: 18,
-      shadowOffset: { width: 0, height: 10 },
-      elevation: 10,
+      shadowColor: "#22C55E",
+      shadowOpacity: 0.3,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 6,
     },
   },
 
   motion: {
-    fast: 90,
-    normal: 140,
-    slow: 220,
+    fast: 150,   // Um pouco mais lento que 90ms para parecer "fluido" e não "nervoso"
+    normal: 300,
+    slow: 450,
   },
 } as const;

@@ -9,18 +9,20 @@ export type AppTheme = {
   colors: {
     bg: string;
     surface: string;
-    surface2: string;
+    surface2: string; // Para elementos secundários ou headers
     text: string;
     textMuted: string;
     border: string;
 
     primary: string;     
-    primary2: string;
+    primary2: string; // Gradiente ou hover
     danger: string;
+    success: string;  // Adicionado para feedbacks positivos (ex: renda)
 
     gradients: {
-      background: readonly [ColorValue, ColorValue];
-      button: readonly [ColorValue, ColorValue];
+      background: readonly [string, string];
+      button: readonly [string, string];
+      card: readonly [string, string]; // Adicionado para cartões premium
     };
   };
   tokens: typeof tokens;
@@ -29,20 +31,29 @@ export type AppTheme = {
 export const darkTheme: AppTheme = {
   name: "dark",
   colors: {
-    bg: "#07130C",
-    surface: "#0B1E14",
-    surface2: "#0E2619",  
-    text: "#000000",
-    textMuted: "rgba(234, 247, 239, 0.70)",
-    border: "rgba(234, 247, 239, 0.10)",
+    // Fundo profundo "Deep Void" para destacar o Neon
+    bg: "#020617", 
+    // Superfícies em camadas sutis de azul-petróleo escuro
+    surface: "#0F172A",
+    surface2: "#1E293B",  
+    
+    text: "#F8FAFC",
+    textMuted: "#94A3B8",
+    border: "rgba(148, 163, 184, 0.10)", // Borda sutil
 
-    primary: "#42E68A",
-    primary2: "#19A05F",
-    danger: "#FF5C7C",
+    // O "Verde AI" - Vibrante e Tecnológico
+    primary: "#22C55E", 
+    primary2: "#16A34A",
+    
+    danger: "#EF4444",
+    success: "#22C55E",
 
     gradients: {
-      background: ["#07130C", "#0A1D14"],
-      button: ["#42E68A", "#19A05F"],
+      // Um gradiente sutil que simula uma luz de topo (efeito spot)
+      background: ["#020617", "#0B1120"], 
+      // Botão com brilho interno
+      button: ["#22C55E", "#16A34A"],
+      card: ["#0F172A", "#1E293B"]
     },
   },
   tokens,
@@ -51,20 +62,24 @@ export const darkTheme: AppTheme = {
 export const lightTheme: AppTheme = {
   name: "light",
   colors: {
-    bg: "#F1F6F1",        
-    surface: "#0eeb75", 
-    surface2: "#10271B",
-    text: "#000000",
-    textMuted: "rgba(0, 0, 0, 0.65)",
-    border: "rgba(3, 3, 3, 0.12)",
+    bg: "#F1F5F9",        
+    surface: "#000505", 
+    surface2: "#E2E8F0",
+    
+    text: "#0F172A",
+    textMuted: "#64748B",
+    border: "#E2E8F0",
 
-    primary: "#19A05F",
-    primary2: "#0E7D47",
-    danger: "#D9445F",
+    primary: "#166534",
+    primary2: "#15803D",
+    
+    danger: "#DC2626",
+    success: "#16A34A",
 
     gradients: {
-      background: ["#f8f1f1", "#62d662"],
-      button: ["#19A05F", "#0E7D47"],
+      background: ["#F1F5F9", "#E2E8F0"],
+      button: ["#166534", "#15803D"],
+      card: ["#FFFFFF", "#F8FAFC"]
     },
   },
   tokens,
