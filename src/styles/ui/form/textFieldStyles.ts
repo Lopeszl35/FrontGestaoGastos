@@ -1,56 +1,88 @@
 import { StyleSheet } from "react-native";
-import { colors, spacing, typography, tokens } from "../../../shared/theme";
+import { spacing, typography, tokens } from "../../../shared/theme/tokens";
+import type { AppTheme } from "../../../shared/theme/themes";
 
-export const styles = StyleSheet.create({
-  container: { marginBottom: spacing.md },
+export function makeTextFieldStyles(theme: AppTheme) {
+  const { colors } = theme;
 
-  label: { color: colors.textMuted, fontSize: typography.size.sm, marginBottom: spacing.xs },
+  return StyleSheet.create({
+    container: { marginBottom: spacing.md },
 
-  animatedWrap: {},
+    label: {
+      color: colors.text,  // BRANCO puro para labels
+      fontSize: typography.size.sm,
+      marginBottom: spacing.xs,
+      fontWeight: typography.weight.medium,
+    },
 
-  inputWrap: {
-    borderWidth: 1,
-    borderRadius: tokens.radii.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 0,          // <- remove padding vertical
-    minHeight: 54,               // <- altura padrão Nexor
-    flexDirection: "row",
-    alignItems: "center",
-    overflow: "hidden",
-},
+    animatedWrap: {
+      position: "relative",
+    },
 
-  inputWrapDefault: {
-    backgroundColor: colors.inputBg,
-    borderColor: colors.inputBorder,
-  },
+    glowEffect: {
+      position: "absolute",
+      left: -4,
+      right: -4,
+      top: -4,
+      bottom: -4,
+      borderRadius: tokens.radii.md + 4,
+      backgroundColor: tokens.glow.primary,
+    },
 
-  inputWrapFocused: {
-    backgroundColor: "rgba(255,255,255,0.05)",
-    borderColor: colors.inputBorderFocus,
-    ...tokens.shadow.inputFocus,
-  },
+    inputWrap: {
+      borderWidth: 1,
+      borderRadius: tokens.radii.md,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 0,
+      minHeight: 54,
+      flexDirection: "row",
+      alignItems: "center",
+      overflow: "hidden",
+    },
 
-  inputWrapError: {
-    backgroundColor: "rgba(255,92,124,0.06)",
-    borderColor: colors.inputBorderError,
-  },
+    inputWrapDefault: {
+      backgroundColor: "rgba(255, 255, 255, 0.03)",
+      borderColor: "rgba(255, 255, 255, 0.12)",
+    },
 
-  leftIcon: { marginRight: spacing.sm, color: colors.textMuted },
+    inputWrapFocused: {
+      backgroundColor: "rgba(124, 58, 237, 0.08)",
+      borderColor: "rgba(124, 58, 237, 0.80)",
+      ...tokens.shadow.inputFocus,
+    },
 
- input: {
-    flex: 1,
-    height: "100%",              // <- ocupa a altura do wrap
-    color: colors.text,
-    fontSize: typography.size.md,
-    backgroundColor: "transparent",
-    paddingVertical: 0,          // <- sem padding interno
-    paddingHorizontal: 0,
-    margin: 0,
-    textAlignVertical: "center",
-    includeFontPadding: false,
- },
+    inputWrapError: {
+      backgroundColor: "rgba(239, 68, 68, 0.08)",
+      borderColor: "rgba(239, 68, 68, 0.80)",
+    },
 
-  placeholder: { color: "rgba(255,255,255,0.35)" },
+    leftIcon: {
+      marginRight: spacing.sm,
+      color: colors.textMuted,
+    },
 
-  error: { color: colors.danger, marginTop: spacing.xs, fontSize: typography.size.xs },
-});
+    input: {
+      flex: 1,
+      height: "100%",
+      color: colors.text,  // BRANCO puro
+      fontSize: typography.size.md,
+      backgroundColor: "transparent",
+      paddingVertical: 0,
+      paddingHorizontal: 0,
+      margin: 0,
+      textAlignVertical: "center",
+      includeFontPadding: false,
+    },
+
+    placeholder: { 
+      color: "rgba(255, 255, 255, 0.35)"  // Placeholder visível
+    },
+
+    error: {
+      color: colors.danger,
+      marginTop: spacing.xs,
+      fontSize: typography.size.xs,
+      fontWeight: typography.weight.medium,
+    },
+  });
+}

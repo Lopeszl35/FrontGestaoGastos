@@ -1,4 +1,3 @@
-// src/shared/theme/themes.ts
 import type { ColorValue } from "react-native";
 import { tokens } from "./tokens";
 
@@ -9,20 +8,26 @@ export type AppTheme = {
   colors: {
     bg: string;
     surface: string;
-    surface2: string; // Para elementos secundários ou headers
+    surface2: string;
     text: string;
+    textTitle: string;
     textMuted: string;
+    textSubtle: string;
     border: string;
 
-    primary: string;     
-    primary2: string; // Gradiente ou hover
+    primary: string;
+    primary2: string;
+    accent: string;
+    accent2: string;
     danger: string;
-    success: string;  // Adicionado para feedbacks positivos (ex: renda)
+    success: string;
+    warning: string;
 
     gradients: {
-      background: readonly [string, string];
-      button: readonly [string, string];
-      card: readonly [string, string]; // Adicionado para cartões premium
+      background: readonly [ColorValue, ColorValue, ColorValue];
+      button: readonly [ColorValue, ColorValue];
+      buttonAccent: readonly [ColorValue, ColorValue];
+      card: readonly [ColorValue, ColorValue];
     };
   };
   tokens: typeof tokens;
@@ -31,29 +36,28 @@ export type AppTheme = {
 export const darkTheme: AppTheme = {
   name: "dark",
   colors: {
-    // Fundo profundo "Deep Void" para destacar o Neon
-    bg: "#020617", 
-    // Superfícies em camadas sutis de azul-petróleo escuro
-    surface: "#0F172A",
-    surface2: "#1E293B",  
-    
-    text: "#F8FAFC",
-    textMuted: "#94A3B8",
-    border: "rgba(148, 163, 184, 0.10)", // Borda sutil
+    bg: "#0A0A0F",
+    surface: "#13131A",
+    surface2: "#1A1A24",
+    text: "#FFFFFF",
+    textTitle: "#FFFFFF",
+    textMuted: "rgba(255, 255, 255, 0.60)",
+    textSubtle: "rgba(255, 255, 255, 0.40)",
+    border: "rgba(255, 255, 255, 0.08)",
 
-    // O "Verde AI" - Vibrante e Tecnológico
-    primary: "#22C55E", 
-    primary2: "#16A34A",
-    
+    primary: "#7C3AED",
+    primary2: "#6366F1",
+    accent: "#06B6D4",
+    accent2: "#0891B2",
     danger: "#EF4444",
-    success: "#22C55E",
+    success: "#10B981",
+    warning: "#F59E0B",
 
     gradients: {
-      // Um gradiente sutil que simula uma luz de topo (efeito spot)
-      background: ["#020617", "#0B1120"], 
-      // Botão com brilho interno
-      button: ["#22C55E", "#16A34A"],
-      card: ["#0F172A", "#1E293B"]
+      background: ["#0A0A0F", "#13131A", "#0A0A0F"],
+      button: ["#7C3AED", "#6366F1"],
+      buttonAccent: ["#06B6D4", "#0891B2"],
+      card: ["rgba(124, 58, 237, 0.08)", "rgba(99, 102, 241, 0.04)"],
     },
   },
   tokens,
@@ -62,24 +66,28 @@ export const darkTheme: AppTheme = {
 export const lightTheme: AppTheme = {
   name: "light",
   colors: {
-    bg: "#F1F5F9",        
-    surface: "#000505", 
-    surface2: "#E2E8F0",
-    
-    text: "#0F172A",
-    textMuted: "#64748B",
-    border: "#E2E8F0",
+    bg: "#FFFFFF",
+    surface: "#F9FAFB",
+    surface2: "#F3F4F6",
+    text: "#ffffff",
+    textTitle: "#111827",
+    textMuted: "rgba(250, 250, 250, 0.78)",
+    textSubtle: "rgba(17, 24, 39, 0.40)",
+    border: "rgba(17, 24, 39, 0.08)",
 
-    primary: "#166534",
-    primary2: "#15803D",
-    
+    primary: "#7C3AED",
+    primary2: "#6366F1",
+    accent: "#0891B2",
+    accent2: "#0E7490",
     danger: "#DC2626",
-    success: "#16A34A",
+    success: "#059669",
+    warning: "#D97706",
 
     gradients: {
-      background: ["#F1F5F9", "#E2E8F0"],
-      button: ["#166534", "#15803D"],
-      card: ["#FFFFFF", "#F8FAFC"]
+      background: ["#FFFFFF", "#F9FAFB", "#FFFFFF"],
+      button: ["#7C3AED", "#6366F1"],
+      buttonAccent: ["#0891B2", "#0E7490"],
+      card: ["rgba(124, 58, 237, 0.04)", "rgba(99, 102, 241, 0.02)"],
     },
   },
   tokens,

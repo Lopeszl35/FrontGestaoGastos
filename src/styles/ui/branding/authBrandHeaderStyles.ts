@@ -27,19 +27,19 @@ export function makeAuthBrandHeaderStyles(theme: AppTheme) {
     },
 
     brand: {
-      color: theme.colors.text,
+      color: theme.colors.textSubtle,
       fontSize: 14,
       fontWeight: "700",
       marginBottom: 10,
     },
 
     brandBy: {
-      color: theme.colors.textMuted,
+      color: theme.colors.textTitle,
       fontWeight: "600",
     },
 
     title: {
-      color: theme.colors.text,
+      color: theme.colors.textTitle,
       fontSize: 34,
       fontWeight: "800",
       letterSpacing: -0.4,
@@ -47,7 +47,7 @@ export function makeAuthBrandHeaderStyles(theme: AppTheme) {
     },
 
     subtitle: {
-      color: theme.colors.textMuted,
+      color: theme.colors.textTitle,
       fontSize: 15,
       lineHeight: 20,
     },
