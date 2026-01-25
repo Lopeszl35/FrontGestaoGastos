@@ -18,6 +18,7 @@ import CreditCardDetails from '../../shared/ui/components/creditCards/CreditCard
 import { creditCardsService } from '../../services/creditCardsService';
 import { makeCreditCardsStyles } from '../../styles/screens/app/creditCardsStyles';
 import type { CreditCard, CreditCardDetails as DetailsType } from '../../types/creditCard';
+import AddCardModal from '../../shared/ui/components/creditCards/AddCardModal'; 
 
 export default function CreditCardsScreen() {
   const { theme } = useTheme();
@@ -30,19 +31,26 @@ export default function CreditCardsScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [detailsLoading, setDetailsLoading] = useState(false);
+  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
 
   // Data atual para buscar visão geral
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth() + 1;
 
+  // ✅ CORREÇÃO: Função segura para pegar o ID
+  const getUserId = () => {
+    return user?.id_usuario ?? (user as any)?.id;
+  };
+
   const loadCards = async () => {
-    console.log('🔍 [CreditCards] Iniciando loadCards...');
-    console.log('🔍 [CreditCards] user.id_usuario:', user?.id_usuario);
-    console.log('🔍 [CreditCards] token exists:', !!token);
+    const userId = getUserId();
     
-    if (!user?.id_usuario) {
-      console.log('⚠️ [CreditCards] Sem user.id_usuario, abortando...');
+    console.log('🔍 [CreditCards] Iniciando loadCards...');
+    console.log('🔍 [CreditCards] userId resolved:', userId);
+    
+    if (!userId) {
+      console.log('⚠️ [CreditCards] Sem usuário identificado, abortando...');
       setLoading(false);
       setRefreshing(false);
       return;
@@ -51,7 +59,7 @@ export default function CreditCardsScreen() {
     try {
       console.log('📡 [CreditCards] Chamando API getAllCards...');
       const allCards = await creditCardsService.getAllCards(
-        user.id_usuario, 
+        userId, 
         token ?? undefined
       );
       console.log('✅ [CreditCards] Cartões recebidos:', allCards.length);
@@ -77,12 +85,13 @@ export default function CreditCardsScreen() {
   };
 
   const loadCardDetails = async (cardUuid: string) => {
-    if (!user?.id_usuario) return;
+    const userId = getUserId();
+    if (!userId) return;
 
     setDetailsLoading(true);
     try {
       const overview = await creditCardsService.getCardsOverview(
-        user.id_usuario,
+        userId,
         currentYear,
         currentMonth,
         cardUuid,
@@ -123,11 +132,12 @@ export default function CreditCardsScreen() {
   };
 
   const handleToggleStatus = async () => {
-    if (!selectedCard || !user?.id_usuario) return;
+    const userId = getUserId();
+    if (!selectedCard || !userId) return;
 
     try {
       await creditCardsService.toggleCardStatus(
-        user.id_usuario,
+        userId,
         selectedCard.uuid_cartao,
         !selectedCard.ativo,
         token ?? undefined
@@ -146,6 +156,14 @@ export default function CreditCardsScreen() {
   const handleDelete = () => {
     // TODO: Abrir modal de confirmação de exclusão
     console.log('Excluir cartão:', selectedCard);
+  };
+
+  const handleAddCard = () => {
+    setIsAddModalVisible(true);
+  };
+
+  const handleCardCreated = () => {
+    loadCards(); 
   };
 
   if (loading) {
@@ -172,11 +190,17 @@ export default function CreditCardsScreen() {
           <Text style={[styles.emptySubtitle, { color: theme.colors.textMuted }]}>
             Adicione seu primeiro cartão para começar
           </Text>
-          <Pressable style={[styles.addButton, { backgroundColor: theme.colors.primary }]}>
+          <Pressable style={[styles.addButton, { backgroundColor: theme.colors.primary }]} onPress={handleAddCard}>
             <MaterialIcons name="add" size={24} color="#FFFFFF" />
             <Text style={styles.addButtonText}>Adicionar Cartão</Text>
           </Pressable>
         </View>
+
+        <AddCardModal 
+          visible={isAddModalVisible}
+          onClose={() => setIsAddModalVisible(false)}
+          onSuccess={handleCardCreated}
+        />
       </ScreenBackground>
     );
   }
@@ -206,6 +230,7 @@ export default function CreditCardsScreen() {
           </View>
           <Pressable
             style={[styles.addIconButton, { backgroundColor: theme.colors.primary + '20' }]}
+            onPress={handleAddCard}
           >
             <MaterialIcons name="add" size={24} color={theme.colors.primary} />
           </Pressable>
@@ -257,6 +282,12 @@ export default function CreditCardsScreen() {
 
         <View style={{ height: 40 }} />
       </ScrollView>
+
+      <AddCardModal 
+        visible={isAddModalVisible}
+        onClose={() => setIsAddModalVisible(false)}
+        onSuccess={handleCardCreated}
+      />
     </ScreenBackground>
   );
 }
