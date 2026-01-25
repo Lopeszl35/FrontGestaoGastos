@@ -53,28 +53,9 @@ export default function HomeScreen() {
     loadData();
   };
 
-  const handleNavigate = (screen: string) => {
-    // TODO: Implementar navegação quando as telas forem criadas
-    Alert.alert(
-      'Em desenvolvimento',
-      `A tela "${screen}" será implementada em breve.`,
-      [{ text: 'OK' }]
-    );
-  };
 
   const handleLogout = () => {
-    Alert.alert(
-      'Sair da Conta',
-      'Tem certeza que deseja sair?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Sair',
-          style: 'destructive',
-          onPress: () => logout(),
-        },
-      ]
-    );
+    logout();
   };
 
   if (loading) {
@@ -226,7 +207,6 @@ export default function HomeScreen() {
       <NavigationMenu
         visible={menuVisible}
         onClose={() => setMenuVisible(false)}
-        onNavigate={handleNavigate}
         onLogout={handleLogout}
       />
     </ScreenBackground>
