@@ -1,3 +1,5 @@
+// src/shared/auth/AuthSessionContext.tsx
+
 import React, { createContext, useContext, useMemo, useState } from "react";
 import type { AuthResult } from "../../types/auth";
 import { setAuthResult, clearAuth, getAuthToken, getAuthUser } from "./tokenStore";
@@ -9,6 +11,7 @@ type AuthSessionContextValue = {
   isAuthenticated: boolean;
   signIn: (result: AuthResult) => void;
   signOut: () => void;
+  logout: () => void;
 };
 
 const AuthSessionContext = createContext<AuthSessionContextValue | null>(null);
@@ -25,19 +28,23 @@ export function AuthSessionProvider({ children }: { children: React.ReactNode })
     const token = session?.token ?? null;
     const user = session?.user ?? null;
 
+    // Função única para limpar a sessão
+    const performLogout = () => {
+      clearAuth();
+      setSession(null);
+    };
+
     return {
       session,
       token,
       user,
-      isAuthenticated: Boolean(token), // ✅ ADD
+      isAuthenticated: Boolean(token),
       signIn: (result) => {
         setAuthResult(result);
         setSession(result);
       },
-      signOut: () => {
-        clearAuth();
-        setSession(null);
-      },
+      signOut: performLogout,
+      logout: performLogout,
     };
   }, [session]);
 

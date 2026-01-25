@@ -7,24 +7,30 @@ import {
   StyleSheet,
   ActivityIndicator,
   Pressable,
+  Alert,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../../shared/theme/ThemeProvider';
+import { useAuthSession } from '../../shared/auth/AuthSessionContext';
 import ScreenBackground from '../../shared/ui/components/layout/ScreenBackground';
 import BalanceCard from '../../shared/ui/components/dashboard/BalanceCard';
 import QuickStatsCard from '../../shared/ui/components/dashboard/QuickStatsCard';
 import ExpenseBreakdown from '../../shared/ui/components/dashboard/ExpenseBreakdown';
 import TransactionItem from '../../shared/ui/components/dashboard/TransactionItem';
 import AIInsightCard from '../../shared/ui/components/dashboard/AIInsightCard';
+import NavigationMenu from '../../shared/ui/components/navigation/NavigationMenu';
+import NavigationFAB from '../../shared/ui/components/navigation/NavigationFAB';
 import { dashboardService } from '../../services/dashboardService';
 import type { DashboardData } from '../../types/dashboard';
 import { spacing, typography } from '../../shared/theme/tokens';
 
 export default function HomeScreen() {
   const { theme } = useTheme();
+  const { logout } = useAuthSession();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
 
   const loadData = async () => {
     try {
@@ -45,6 +51,30 @@ export default function HomeScreen() {
   const onRefresh = () => {
     setRefreshing(true);
     loadData();
+  };
+
+  const handleNavigate = (screen: string) => {
+    // TODO: Implementar navegação quando as telas forem criadas
+    Alert.alert(
+      'Em desenvolvimento',
+      `A tela "${screen}" será implementada em breve.`,
+      [{ text: 'OK' }]
+    );
+  };
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Sair da Conta',
+      'Tem certeza que deseja sair?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Sair',
+          style: 'destructive',
+          onPress: () => logout(),
+        },
+      ]
+    );
   };
 
   if (loading) {
@@ -182,9 +212,23 @@ export default function HomeScreen() {
           ))}
         </View>
 
-        {/* Bottom Spacing */}
-        <View style={{ height: 40 }} />
+        {/* Bottom Spacing for FAB */}
+        <View style={{ height: 100 }} />
       </ScrollView>
+
+      {/* Navigation FAB */}
+      <NavigationFAB
+        onPress={() => setMenuVisible(!menuVisible)}
+        isMenuOpen={menuVisible}
+      />
+
+      {/* Navigation Menu */}
+      <NavigationMenu
+        visible={menuVisible}
+        onClose={() => setMenuVisible(false)}
+        onNavigate={handleNavigate}
+        onLogout={handleLogout}
+      />
     </ScreenBackground>
   );
 }

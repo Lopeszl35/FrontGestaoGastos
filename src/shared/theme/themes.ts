@@ -72,9 +72,9 @@ export const lightTheme: AppTheme = {
     surface: "#0d0d0e",
     surface2: "#F3F4F6",
     text: "#ffffff",
-    textTitle: "#111827",
+    textTitle: "#ffffff",
     textMuted: "rgba(250, 250, 250, 0.78)",
-    textSubtle: "rgba(17, 24, 39, 0.40)",
+    textSubtle: "rgba(255, 255, 255, 0.4)",
     border: "rgba(17, 24, 39, 0.08)",
 
     primary: "#7C3AED",
