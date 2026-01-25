@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Dimensions,
   StatusBar,
+  ScrollView,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
@@ -15,7 +16,9 @@ import { useTheme } from '../../../theme/ThemeProvider';
 import { spacing } from '../../../theme/tokens';
 import { makeNavigationMenuStyles } from '../../../../styles/ui/navigation/navigationMenuStyles';
 
-const { height } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+// ✅ DEFINIÇÃO FIXA: O menu terá exatamente 85% da altura da tela
+const MENU_HEIGHT = SCREEN_HEIGHT * 0.85;
 
 type MenuItem = {
   id: string;
@@ -38,11 +41,12 @@ export default function NavigationMenu({ visible, onClose, onNavigate, onLogout 
   const { theme } = useTheme();
   const styles = useMemo(() => makeNavigationMenuStyles(theme), [theme]);
   
-  // Estado para controlar se o componente deve ser renderizado na árvore
+  // Estado para controlar renderização segura
   const [showMenu, setShowMenu] = useState(visible);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(height)).current;
+  // O slide começa "escondido" abaixo da tela (igual a altura do menu)
+  const slideAnim = useRef(new Animated.Value(MENU_HEIGHT)).current;
 
   const menuItems: MenuItem[] = [
     {
@@ -98,7 +102,6 @@ export default function NavigationMenu({ visible, onClose, onNavigate, onLogout 
 
   useEffect(() => {
     if (visible) {
-      // 1. Ao abrir, garante que o componente está renderizado antes de animar
       setShowMenu(true);
       StatusBar.setBarStyle('light-content');
       
@@ -112,11 +115,10 @@ export default function NavigationMenu({ visible, onClose, onNavigate, onLogout 
           toValue: 0,
           useNativeDriver: true,
           speed: 12,
-          bounciness: 8,
+          bounciness: 6,
         }),
       ]).start();
     } else {
-      // 2. Ao fechar, anima primeiro e só desmonta no callback (finished)
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 0,
@@ -124,7 +126,7 @@ export default function NavigationMenu({ visible, onClose, onNavigate, onLogout 
           useNativeDriver: true,
         }),
         Animated.timing(slideAnim, {
-          toValue: height,
+          toValue: MENU_HEIGHT, // Desliza para baixo completamente
           duration: 250,
           useNativeDriver: true,
         }),
@@ -145,7 +147,6 @@ export default function NavigationMenu({ visible, onClose, onNavigate, onLogout 
     onClose();
   };
 
-  // Se não deve mostrar o menu, retorna null para não renderizar nada
   if (!showMenu) return null;
 
   return (
@@ -167,14 +168,21 @@ export default function NavigationMenu({ visible, onClose, onNavigate, onLogout 
           styles.menuContainer,
           {
             transform: [{ translateY: slideAnim }],
+            // ✅ CORREÇÃO 1: Altura explícita e posicionamento absoluto no fundo
+            height: MENU_HEIGHT,
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 999, // Garante que fique acima de tudo
           },
         ]}
       >
         <LinearGradient
           colors={['rgba(19, 19, 26, 0.98)', 'rgba(13, 13, 14, 0.98)']}
-          style={styles.menuGradient}
+          style={[styles.menuGradient, { flex: 1, overflow: 'hidden' }]} 
         >
-          {/* Header */}
+          {/* Header Fixo */}
           <View style={styles.header}>
             <View style={styles.headerLeft}>
               <View style={[styles.headerIcon, { backgroundColor: `${theme.colors.primary}20` }]}>
@@ -192,56 +200,61 @@ export default function NavigationMenu({ visible, onClose, onNavigate, onLogout 
             </Pressable>
           </View>
 
-          {/* Divider */}
           <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
 
-          {/* Menu Items */}
-          <View style={styles.menuItems}>
-            {menuItems.map((item, index) => (
-              <MenuItem
-                key={item.id}
-                item={item}
-                onPress={() => handleItemPress(item)}
-                delay={index * 50}
-                theme={theme}
-                styles={styles}
-              />
-            ))}
-          </View>
-
-          {/* Divider */}
-          <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
-
-          {/* Logout Button */}
-          <Pressable
-            onPress={() => {
-              onLogout();
-              onClose();
-            }}
-            style={({ pressed }) => [
-              styles.logoutButton,
-              {
-                backgroundColor: 'rgba(239, 68, 68, 0.10)',
-                borderColor: 'rgba(239, 68, 68, 0.30)',
-                opacity: pressed ? 0.7 : 1,
-              },
-            ]}
+          {/* ✅ CORREÇÃO 2: ScrollView ocupando todo o espaço restante */}
+          <ScrollView
+            style={{ flex: 1, width: '100%' }}
+            // ✅ CORREÇÃO 3: Padding gigante no final para garantir rolagem total
+            contentContainerStyle={{ paddingBottom: 120, paddingTop: 10 }}
+            showsVerticalScrollIndicator={false}
+            bounces={true} // Melhora a sensação de rolagem no iOS
           >
-            <View style={[styles.logoutIcon, { backgroundColor: 'rgba(239, 68, 68, 0.20)' }]}>
-              <MaterialIcons name="logout" size={20} color={theme.colors.danger} />
+            <View style={styles.menuItems}>
+              {menuItems.map((item, index) => (
+                <MenuItem
+                  key={item.id}
+                  item={item}
+                  onPress={() => handleItemPress(item)}
+                  delay={index * 50}
+                  theme={theme}
+                  styles={styles}
+                />
+              ))}
             </View>
-            <Text style={[styles.logoutText, { color: theme.colors.danger }]}>Sair da Conta</Text>
-            <MaterialIcons name="chevron-right" size={20} color={theme.colors.danger} />
-          </Pressable>
 
-          {/* Bottom Spacing */}
-          <View style={{ height: spacing.xl }} />
+            <View style={[styles.divider, { backgroundColor: theme.colors.border, marginTop: spacing.md }]} />
+
+            {/* Logout agora faz parte do fluxo de rolagem */}
+            <Pressable
+              onPress={() => {
+                onLogout();
+                onClose();
+              }}
+              style={({ pressed }) => [
+                styles.logoutButton,
+                {
+                  marginTop: spacing.md,
+                  backgroundColor: 'rgba(239, 68, 68, 0.10)',
+                  borderColor: 'rgba(239, 68, 68, 0.30)',
+                  opacity: pressed ? 0.7 : 1,
+                },
+              ]}
+            >
+              <View style={[styles.logoutIcon, { backgroundColor: 'rgba(239, 68, 68, 0.20)' }]}>
+                <MaterialIcons name="logout" size={20} color={theme.colors.danger} />
+              </View>
+              <Text style={[styles.logoutText, { color: theme.colors.danger }]}>Sair da Conta</Text>
+              <MaterialIcons name="chevron-right" size={20} color={theme.colors.danger} />
+            </Pressable>
+          </ScrollView>
         </LinearGradient>
       </Animated.View>
     </Animated.View>
   );
 }
 
+// ... Componente MenuItem (permanece igual ao seu código original)
 type MenuItemProps = {
   item: MenuItem;
   onPress: () => void;
