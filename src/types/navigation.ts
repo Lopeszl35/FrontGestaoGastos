@@ -10,4 +10,11 @@ export type AuthStackParamList = {
 
 export type AppStackParamList = {
   Home: undefined;
+  CreditCards: undefined;
+  VariableExpenses: undefined;
+  FixedExpenses: undefined;
+  Financing: undefined;
+  Income: undefined;
+  RecurringExpenses: undefined;
+  PaymentReminders: undefined;
 };

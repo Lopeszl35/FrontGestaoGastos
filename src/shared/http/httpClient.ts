@@ -1,7 +1,7 @@
 import type { ServiceError } from "../../types/auth";
 import { API_BASE_URL } from "../config/api";
 
-type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 export async function httpRequest<T>(
   method: HttpMethod,

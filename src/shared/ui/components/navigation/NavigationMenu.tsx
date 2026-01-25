@@ -1,3 +1,5 @@
+// src/shared/ui/components/navigation/NavigationMenu.tsx
+
 import React, { useEffect, useRef, useMemo, useState } from 'react';
 import {
   View,
@@ -12,24 +14,29 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { spacing } from '../../../theme/tokens';
 import { makeNavigationMenuStyles } from '../../../../styles/ui/navigation/navigationMenuStyles';
 import ConstructionModal from '../feedback/ConstructionModal';
 import LogoutModal from '../feedback/LogoutModal';
+import type { AppStackParamList } from '../../../../types/navigation';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const MENU_HEIGHT = SCREEN_HEIGHT * 0.85;
+
+type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
 type MenuItem = {
   id: string;
   label: string;
   icon: keyof typeof MaterialIcons.glyphMap;
   color: string;
-  screen?: string;
+  screen?: keyof AppStackParamList;
   action?: () => void;
   isDanger?: boolean;
-  wip?: boolean; // ✅ Flag para indicar "Work In Progress"
+  wip?: boolean;
 };
 
 type Props = {
@@ -40,6 +47,7 @@ type Props = {
 
 export default function NavigationMenu({ visible, onClose, onLogout }: Props) {
   const { theme } = useTheme();
+  const navigation = useNavigation<NavigationProp>();
   const styles = useMemo(() => makeNavigationMenuStyles(theme), [theme]);
   
   const [showMenu, setShowMenu] = useState(visible);
@@ -49,7 +57,6 @@ export default function NavigationMenu({ visible, onClose, onLogout }: Props) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(MENU_HEIGHT)).current;
 
-  // Definição dos itens do menu
   const menuItems: MenuItem[] = [
     {
       id: 'credit-cards',
@@ -57,7 +64,7 @@ export default function NavigationMenu({ visible, onClose, onLogout }: Props) {
       icon: 'credit-card',
       color: theme.colors.warning,
       screen: 'CreditCards',
-      wip: true, // 🚧 Em construção
+      wip: false, // ✅ Implementado!
     },
     {
       id: 'variable-expenses',
@@ -65,7 +72,7 @@ export default function NavigationMenu({ visible, onClose, onLogout }: Props) {
       icon: 'shopping-cart',
       color: theme.colors.success,
       screen: 'VariableExpenses',
-      wip: true, // 🚧 Em construção
+      wip: true,
     },
     {
       id: 'fixed-expenses',
@@ -128,7 +135,6 @@ export default function NavigationMenu({ visible, onClose, onLogout }: Props) {
   }, [visible]);
 
   const handleItemPress = (item: MenuItem) => {
-    // ✅ Lógica centralizada: Se for WIP, abre o modal e para por aqui
     if (item.wip) {
       setConstructionVisible(true);
       return;
@@ -137,7 +143,7 @@ export default function NavigationMenu({ visible, onClose, onLogout }: Props) {
     if (item.action) {
       item.action();
     } else if (item.screen) {
-      // onNavigate(item.screen);
+      navigation.navigate(item.screen);
     }
     onClose();
   };
@@ -168,7 +174,6 @@ export default function NavigationMenu({ visible, onClose, onLogout }: Props) {
           colors={['rgba(19, 19, 26, 0.98)', 'rgba(13, 13, 14, 0.98)']}
           style={[styles.menuGradient, { flex: 1, overflow: 'hidden' }]}
         >
-          {/* Header */}
           <View style={styles.header}>
             <View style={styles.headerLeft}>
               <View style={[styles.headerIcon, { backgroundColor: `${theme.colors.primary}20` }]}>
@@ -208,9 +213,7 @@ export default function NavigationMenu({ visible, onClose, onLogout }: Props) {
             <View style={[styles.divider, { backgroundColor: theme.colors.border, marginTop: spacing.md }]} />
 
             <Pressable
-              onPress={() => {
-                setLogoutModalVisible(true); 
-              }}
+              onPress={() => setLogoutModalVisible(true)}
               style={({ pressed }) => [
                 styles.logoutButton,
                 {
@@ -231,7 +234,6 @@ export default function NavigationMenu({ visible, onClose, onLogout }: Props) {
         </LinearGradient>
       </Animated.View>
 
-      {/* ✅ Modal reutilizável inserido aqui */}
       <ConstructionModal 
         visible={constructionVisible}
         onClose={() => setConstructionVisible(false)}
@@ -239,20 +241,19 @@ export default function NavigationMenu({ visible, onClose, onLogout }: Props) {
 
       <LogoutModal
         visible={logoutModalVisible}
-        onClose={() => setLogoutModalVisible(false)} // Usuário cancelou
+        onClose={() => setLogoutModalVisible(false)}
         onConfirm={() => {
-          setLogoutModalVisible(false); // Fecha o modal
-          onClose(); // Fecha o menu
+          setLogoutModalVisible(false);
+          onClose();
           setTimeout(() => {
-             onLogout(); // Executa o logout real após uma leve pausa visual
-          }, 200); 
+            onLogout();
+          }, 200);
         }}
       />
     </Animated.View>
   );
 }
 
-// Componente MenuItem (Puro visual)
 type MenuItemProps = {
   item: MenuItem;
   onPress: () => void;
@@ -292,7 +293,7 @@ function MenuItem({ item, onPress, delay, theme, styles }: MenuItemProps) {
           {
             backgroundColor: theme.colors.surface,
             borderColor: theme.colors.border,
-            opacity: item.wip ? 0.75 : 1, // Feedback visual sutil de que é diferente
+            opacity: item.wip ? 0.75 : 1,
           },
         ]}
       >
@@ -301,9 +302,8 @@ function MenuItem({ item, onPress, delay, theme, styles }: MenuItemProps) {
         </View>
         <View style={{ flex: 1, justifyContent: 'center' }}>
           <Text style={[styles.menuItemText, { color: theme.colors.text }]}>{item.label}</Text>
-          {/* Badge "Em Breve" se for WIP */}
           {item.wip && (
-            <Text style={{ fontSize: 10, color: theme.colors.textMuted, marginTop: 2, marginLeft: 0 }}>
+            <Text style={{ fontSize: 10, color: theme.colors.textMuted, marginTop: 2 }}>
               Em breve
             </Text>
           )}
