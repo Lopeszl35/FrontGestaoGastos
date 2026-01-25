@@ -1,46 +1,51 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
 import type { AuthResult } from "../../types/auth";
+import { setAuthResult, clearAuth, getAuthToken, getAuthUser } from "./tokenStore";
 
-type AuthSessionState = {
-  isAuthenticated: boolean;
+type AuthSessionContextValue = {
+  session: AuthResult | null;
   token: string | null;
-  user: AuthResult["user"] | null;
-};
-
-type AuthSessionActions = {
+  user: ReturnType<typeof getAuthUser>;
+  isAuthenticated: boolean;
   signIn: (result: AuthResult) => void;
   signOut: () => void;
 };
 
-type AuthSessionContextValue = AuthSessionState & AuthSessionActions;
-
 const AuthSessionContext = createContext<AuthSessionContextValue | null>(null);
 
 export function AuthSessionProvider({ children }: { children: React.ReactNode }) {
-  const [token, setToken] = useState<string | null>(null);
-  const [user, setUser] = useState<AuthResult["user"] | null>(null);
+  const [session, setSession] = useState<AuthResult | null>(() => {
+    const token = getAuthToken();
+    const user = getAuthUser();
+    if (!token || !user) return null;
+    return { token, user } as AuthResult;
+  });
 
   const value = useMemo<AuthSessionContextValue>(() => {
+    const token = session?.token ?? null;
+    const user = session?.user ?? null;
+
     return {
-      isAuthenticated: !!token,
+      session,
       token,
       user,
+      isAuthenticated: Boolean(token), // ✅ ADD
       signIn: (result) => {
-        setToken(result.token);
-        setUser(result.user);
+        setAuthResult(result);
+        setSession(result);
       },
       signOut: () => {
-        setToken(null);
-        setUser(null);
+        clearAuth();
+        setSession(null);
       },
     };
-  }, [token, user]);
+  }, [session]);
 
   return <AuthSessionContext.Provider value={value}>{children}</AuthSessionContext.Provider>;
 }
 
 export function useAuthSession() {
   const ctx = useContext(AuthSessionContext);
-  if (!ctx) throw new Error("useAuthSession must be used within AuthSessionProvider");
+  if (!ctx) throw new Error("useAuthSession deve ser usado dentro de AuthSessionProvider");
   return ctx;
 }

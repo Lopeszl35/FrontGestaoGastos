@@ -22,6 +22,7 @@ export type AppTheme = {
     danger: string;
     success: string;
     warning: string;
+    info: string;
 
     gradients: {
       background: readonly [ColorValue, ColorValue, ColorValue];
@@ -52,6 +53,7 @@ export const darkTheme: AppTheme = {
     danger: "#EF4444",
     success: "#10B981",
     warning: "#F59E0B",
+    info: "#3B82F6",
 
     gradients: {
       background: ["#0A0A0F", "#13131A", "#0A0A0F"],
@@ -66,8 +68,8 @@ export const darkTheme: AppTheme = {
 export const lightTheme: AppTheme = {
   name: "light",
   colors: {
-    bg: "#FFFFFF",
-    surface: "#F9FAFB",
+    bg: "#088a8f",
+    surface: "#0d0d0e",
     surface2: "#F3F4F6",
     text: "#ffffff",
     textTitle: "#111827",
@@ -82,9 +84,10 @@ export const lightTheme: AppTheme = {
     danger: "#DC2626",
     success: "#059669",
     warning: "#D97706",
+    info: "#2563EB",
 
     gradients: {
-      background: ["#FFFFFF", "#F9FAFB", "#FFFFFF"],
+      background: ["#0f172a", "#0f172a", "#0f172a"],
       button: ["#7C3AED", "#6366F1"],
       buttonAccent: ["#0891B2", "#0E7490"],
       card: ["rgba(124, 58, 237, 0.04)", "rgba(99, 102, 241, 0.02)"],

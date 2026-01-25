@@ -21,16 +21,22 @@ export type RegisterDTO = {
 };
 
 export type AuthUser = {
-  id: string;
-  fullName: string;
+  id_usuario?: number;
+  id?: string;
+  nome: string;
   email: string;
-  financialProfile: FinancialProfile;
+  perfil_financeiro: FinancialProfile;
+  salario_mensal?: number;
+  saldo_atual?: number;
+  saldo_inicial?: number;
 };
 
 export type AuthResult = {
   token: string;
   user: AuthUser;
 };
+
+export type AuthToken = string;
 
 export type FieldErrors<T extends string> = Partial<Record<T, string>>;
 

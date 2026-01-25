@@ -3,6 +3,7 @@ import type { AuthResult, LoginDTO, RegisterDTO, FinancialProfile } from "../../
 import { httpRequest } from "../../../../shared/http/httpClient";
 
 type BackendLoginResponse = {
+  token: string;
   user: {
     id_usuario: number;
     nome: string;
@@ -12,7 +13,6 @@ type BackendLoginResponse = {
     saldo_atual?: number;
     saldo_inicial?: number;
   };
-  token: string;
 };
 
 type BackendCreateUserResponse = {
@@ -39,9 +39,12 @@ function mapLoginToAuthResult(res: BackendLoginResponse): AuthResult {
     token: res.token,
     user: {
       id: String(res.user.id_usuario),
-      fullName: res.user.nome,
+      nome: res.user.nome,
       email: res.user.email,
-      financialProfile: mapProfileFromBackend(res.user.perfil_financeiro),
+      perfil_financeiro: mapProfileFromBackend(res.user.perfil_financeiro),
+      salario_mensal: res.user.salario_mensal,
+      saldo_atual: res.user.saldo_atual,
+      saldo_inicial: res.user.saldo_inicial,
     },
   };
 }

@@ -11,6 +11,7 @@ export const colors = {
   textSubtle: "rgba(255, 255, 255, 0.40)",
 
   // Primary - Violet vibrante mas elegante
+  primary:  "#7C3AED",          // Violet 500
   primaryA: "#7C3AED",         // Violet 600
   primaryB: "#A78BFA",         // Violet 400  
   primaryC: "#6366F1",         // Indigo 500

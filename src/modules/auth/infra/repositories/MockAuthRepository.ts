@@ -24,9 +24,9 @@ export class MockAuthRepository implements AuthRepository {
         token: "mock.jwt.token",
         user: {
           id: "usr_demo",
-          fullName: "Usuário Demo",
+          nome: "Usuário Demo",
           email,
-          financialProfile: "MODERADO",
+          perfil_financeiro: "MODERADO",
         },
       };
     }
@@ -46,9 +46,9 @@ export class MockAuthRepository implements AuthRepository {
       token: "mock.jwt.token.new",
       user: {
         id: `usr_${Math.random().toString(16).slice(2)}`,
-        fullName: payload.fullName.trim(),
+        nome: payload.fullName.trim(),
         email,
-        financialProfile: payload.financialProfile,
+        perfil_financeiro: payload.financialProfile,
       },
     };
   }

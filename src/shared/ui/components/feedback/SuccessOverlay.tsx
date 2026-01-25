@@ -4,8 +4,10 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { useSuccessAnimation } from "../../../../animations/useSuccessAnimation";
 import { colors } from "../../../../shared/theme/colors";
+import { AppTheme } from "../../../../shared/theme/themes";
 import { typography } from "../../../../shared/theme/typography";
 import { spacing } from "../../../../shared/theme/spacing";
+import App from "../../../../../App";
 
 const { width, height } = Dimensions.get("window");
 
