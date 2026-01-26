@@ -22,7 +22,7 @@ export type CreditCard = {
   limiteUsado: number;
   limiteDisponivel: number;
   percentualUsado: number;
-  ativo: boolean;
+  ativo?: boolean;
 };
 
 export type CreditCardDetails = {

@@ -1,5 +1,3 @@
-// src/shared/ui/components/creditCards/CreditCardDetails.tsx
-
 import React, { useEffect, useRef, useMemo } from 'react';
 import { View, Text, ScrollView, Animated, Pressable } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -21,6 +19,15 @@ export default function CreditCardDetails({ details, onEdit, onToggleStatus, onD
   const fadeIn = useRef(new Animated.Value(0)).current;
   const slideUp = useRef(new Animated.Value(30)).current;
 
+  // ✅ Função auxiliar para formatar com segurança absoluta
+  const formatCurrency = (value: number | undefined | null) => {
+    return (value ?? 0).toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      style: 'currency', // Opcional: Adiciona R$ automaticamente se quiser
+      currency: 'BRL'
+    }).replace('R$', '').trim(); // Mantendo seu estilo original sem o R$ dentro da string formatada
+  };
+
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeIn, {
@@ -35,9 +42,12 @@ export default function CreditCardDetails({ details, onEdit, onToggleStatus, onD
         bounciness: 6,
       }),
     ]).start();
-  }, [details.resumoCartao.uuid_cartao]);
+  }, [details?.resumoCartao?.uuid_cartao]);
 
-  const { resumoCartao, porCategoria, parcelasAtivas, gastosDoMes } = details;
+  // ✅ Proteção contra detalhes nulos
+  if (!details || !details.resumoCartao) return null;
+
+  const { resumoCartao, porCategoria = [], parcelasAtivas = [], gastosDoMes = { total: 0, itens: [] } } = details;
 
   return (
     <Animated.View
@@ -119,10 +129,7 @@ export default function CreditCardDetails({ details, onEdit, onToggleStatus, onD
           <View style={styles.infoRow}>
             <MaterialIcons name="account-balance-wallet" size={18} color={theme.colors.textMuted} />
             <Text style={[styles.infoLabel, { color: theme.colors.textMuted }]}>
-              Limite Total: R${' '}
-              {resumoCartao.limiteTotal.toLocaleString('pt-BR', {
-                minimumFractionDigits: 2,
-              })}
+              Limite Total: R$ {formatCurrency(resumoCartao.limiteTotal)}
             </Text>
           </View>
         </View>
@@ -139,7 +146,7 @@ export default function CreditCardDetails({ details, onEdit, onToggleStatus, onD
                     {item.categoria}
                   </Text>
                   <Text style={[styles.categoryValue, { color: theme.colors.text }]}>
-                    R$ {item.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    R$ {formatCurrency(item.valor)}
                   </Text>
                 </View>
               </View>
@@ -159,7 +166,7 @@ export default function CreditCardDetails({ details, onEdit, onToggleStatus, onD
                     {parcela.descricao}
                   </Text>
                   <Text style={[styles.parcelaValor, { color: theme.colors.primary }]}>
-                    R$ {parcela.valorParcela.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    R$ {formatCurrency(parcela.valorParcela)}
                   </Text>
                 </View>
                 <Text style={[styles.parcelaInfo, { color: theme.colors.textMuted }]}>
@@ -175,11 +182,11 @@ export default function CreditCardDetails({ details, onEdit, onToggleStatus, onD
           <View style={styles.sectionHeader}>
             <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Gastos do Mês</Text>
             <Text style={[styles.totalGastos, { color: theme.colors.primary }]}>
-              R$ {gastosDoMes.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              R$ {formatCurrency(gastosDoMes?.total)}
             </Text>
           </View>
 
-          {gastosDoMes.itens.length === 0 ? (
+          {(!gastosDoMes?.itens || gastosDoMes.itens.length === 0) ? (
             <Text style={[styles.emptyText, { color: theme.colors.textMuted }]}>
               Nenhum gasto registrado neste mês
             </Text>
@@ -191,7 +198,7 @@ export default function CreditCardDetails({ details, onEdit, onToggleStatus, onD
                     {item.descricao}
                   </Text>
                   <Text style={[styles.gastoValor, { color: theme.colors.text }]}>
-                    R$ {item.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    R$ {formatCurrency(item.valor)}
                   </Text>
                 </View>
                 <View style={styles.gastoFooter}>

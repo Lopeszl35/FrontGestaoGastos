@@ -1,5 +1,3 @@
-// src/shared/ui/components/creditCards/CreditCardItem.tsx
-
 import React, { useEffect, useRef, useMemo } from 'react';
 import { View, Text, Pressable, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -22,6 +20,13 @@ export default function CreditCardItem({ card, onPress, isSelected, delay = 0 }:
   const fadeIn = useRef(new Animated.Value(0)).current;
   const slideX = useRef(new Animated.Value(-20)).current;
   const scale = useRef(new Animated.Value(1)).current;
+
+  // ✅ Função segura para formatar valores no card
+  const formatCurrency = (value: number | undefined | null) => {
+    return (value ?? 0).toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+    });
+  };
 
   useEffect(() => {
     Animated.parallel([
@@ -62,7 +67,9 @@ export default function CreditCardItem({ card, onPress, isSelected, delay = 0 }:
   const percentual = card.percentualUsado || 0;
 
   const getCardIcon = () => {
-    switch (card.bandeira?.toLowerCase()) {
+    // Tratamento seguro para string opcional
+    const bandeira = card.bandeira ? String(card.bandeira).toLowerCase() : '';
+    switch (bandeira) {
       case 'visa':
         return 'payment';
       case 'mastercard':
@@ -116,9 +123,7 @@ export default function CreditCardItem({ card, onPress, isSelected, delay = 0 }:
             <View style={styles.limiteRow}>
               <Text style={styles.limiteLabel}>Disponível</Text>
               <Text style={styles.limiteValue}>
-                R$ {card.limiteDisponivel.toLocaleString('pt-BR', {
-                  minimumFractionDigits: 2,
-                })}
+                R$ {formatCurrency(card.limiteDisponivel)}
               </Text>
             </View>
 
@@ -137,9 +142,7 @@ export default function CreditCardItem({ card, onPress, isSelected, delay = 0 }:
 
             <View style={styles.limiteFooter}>
               <Text style={styles.limiteUsed}>
-                Usado: R$ {card.limiteUsado.toLocaleString('pt-BR', {
-                  minimumFractionDigits: 2,
-                })}
+                Usado: R$ {formatCurrency(card.limiteUsado)}
               </Text>
               <Text style={styles.percentual}>{percentual}%</Text>
             </View>

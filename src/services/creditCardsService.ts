@@ -24,7 +24,7 @@ class CreditCardsService {
 
     return httpRequest<CreditCardsOverview>(
       'GET',
-      `api/getCartoesVisaoGeral/${userId}?${params}`,
+      `/api/getCartoesVisaoGeral/${userId}?${params}`,
       undefined,
       token
     );
@@ -33,7 +33,7 @@ class CreditCardsService {
   async getAllCards(userId: number, token?: string): Promise<CreditCard[]> {
     return httpRequest<CreditCard[]>(
       'GET',
-      `api/cartoes/${userId}`,
+      `/api/cartoes/${userId}`,
       undefined,
       token
     );
@@ -46,7 +46,7 @@ class CreditCardsService {
   ): Promise<CreditCard> {
     return httpRequest<CreditCard>(
       'POST',
-      `api/criarCartao/${userId}`,
+      `/api/criarCartao/${userId}`,
       cardData,
       token
     );
@@ -60,7 +60,7 @@ class CreditCardsService {
   ): Promise<CreditCard> {
     return httpRequest<CreditCard>(
       'PUT',
-      `api/editarCartoes/${userId}/${cardUuid}`,
+      `/api/editarCartoes/${userId}/${cardUuid}`,
       cardData,
       token
     );
@@ -74,7 +74,7 @@ class CreditCardsService {
   ): Promise<{ ativo: boolean }> {
     return httpRequest<{ ativo: boolean }>(
       'PATCH',
-      `api/cartoes/${userId}/${cardUuid}/ativar?ativo=${ativar}`,
+      `/api/cartoes/${userId}/${cardUuid}/ativar?ativo=${ativar}`,
       undefined,
       token
     );
@@ -90,7 +90,7 @@ class CreditCardsService {
   ): Promise<any> {
     return httpRequest<any>(
       'POST',
-      `api/cartoes/${userId}/${cardId}/pagarFatura`,
+      `/api/cartoes/${userId}/${cardId}/pagarFatura`,
       { valorPagamento, ano, mes },
       token
     );
