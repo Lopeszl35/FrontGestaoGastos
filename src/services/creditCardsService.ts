@@ -5,7 +5,8 @@ import type {
   CreditCardsOverview, 
   CreateCreditCardDTO, 
   EditCreditCardDTO, 
-  CreditCard 
+  CreditCard,
+  CreateTransactionDTO 
 } from '../types/creditCard';
 
 class CreditCardsService {
@@ -80,9 +81,36 @@ class CreditCardsService {
     );
   }
 
+  async createTransaction(
+    userId: number,
+    cardUuid: string,
+    transactionData: CreateTransactionDTO,
+    token?: string
+  ): Promise<any> {
+    return httpRequest<any>(
+      'POST',
+      `/api/cartoes/${userId}/${cardUuid}/lancamentos`,
+      transactionData,
+      token
+    );
+  }
+
+  async deleteCard(
+    userId: number,
+    cardUuid: string,
+    token?: string
+  ): Promise<void> {
+    return httpRequest<void>(
+      'DELETE',
+      `/api/cartoes/${userId}/${cardUuid}`,
+      undefined,
+      token
+    );
+  }
+
   async payInvoice(
     userId: number,
-    cardId: number,
+    cardUuid: string,
     valorPagamento: number,
     ano: number,
     mes: number,
@@ -90,7 +118,7 @@ class CreditCardsService {
   ): Promise<any> {
     return httpRequest<any>(
       'POST',
-      `/api/cartoes/${userId}/${cardId}/pagarFatura`,
+      `/api/cartoes/${userId}/${cardUuid}/pagarFatura`,
       { valorPagamento, ano, mes },
       token
     );
