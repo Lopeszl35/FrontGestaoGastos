@@ -11,7 +11,12 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [themeName, setThemeName] = useState<ThemeName>("light");
+  // MVP: dark-only (fintech premium). Mantemos o tipo ThemeName por compatibilidade,
+  // mas o app inicializa em dark.
+  const [themeName, setThemeName] = useState<ThemeName>("dark");
+
+  // Dark-only: bloqueia alternância acidental (mais rápido para o MVP).
+  const forceDark = () => setThemeName("dark");
 
   const theme = useMemo(() => (themeName === "dark" ? darkTheme : lightTheme), [themeName]);
 
@@ -19,8 +24,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     () => ({
       theme,
       themeName,
-      setThemeName,
-      toggleTheme: () => setThemeName((p) => (p === "dark" ? "light" : "dark")),
+      setThemeName: () => forceDark(),
+      toggleTheme: () => forceDark(),
     }),
     [theme, themeName]
   );

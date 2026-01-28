@@ -1,6 +1,7 @@
 import type { AuthRepository } from "../../application/ports/AuthRepository";
-import type { AuthResult, LoginDTO, RegisterDTO, FinancialProfile } from "../../../../types/auth";
+import type { AuthResult, LoginDTO, RegisterDTO } from "../../../../types/auth";
 import { httpRequest } from "../../../../shared/http/httpClient";
+import { mapProfileFromBackend, mapProfileToBackend } from "../../../../shared/utils/financialProfile";
 
 type BackendLoginResponse = {
   token: string;
@@ -20,19 +21,6 @@ type BackendCreateUserResponse = {
   status: number;
   data: any;
 };
-
-function mapProfileToBackend(fp: FinancialProfile): string {
-  if (fp === "CONSERVADOR") return "conservador";
-  if (fp === "AGRESSIVO") return "agressivo";
-  return "moderado";
-}
-
-function mapProfileFromBackend(fp: string): FinancialProfile {
-  const v = (fp ?? "").toLowerCase();
-  if (v === "conservador") return "CONSERVADOR";
-  if (v === "agressivo") return "AGRESSIVO";
-  return "MODERADO";
-}
 
 function mapLoginToAuthResult(res: BackendLoginResponse): AuthResult {
   return {

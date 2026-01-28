@@ -27,11 +27,11 @@ export function useButtonPress() {
         toValue: 1,
         useNativeDriver: true,
         speed: 40,
-        bounciness: 8,
+        bounciness: 4,
       }),
       Animated.timing(opacity, {
         toValue: 1,
-        duration: 150,
+        duration: 120,
         useNativeDriver: true,
       }),
     ]).start();

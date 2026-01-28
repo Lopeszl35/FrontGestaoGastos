@@ -1,15 +1,27 @@
+// Escala baseada em 4px (consistência visual = sensação premium)
 export const spacing = {
-  xs: 6,
-  sm: 10,
-  md: 14,
-  lg: 18,
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
   xl: 24,
   xxl: 32,
 } as const;
 
 export const typography = {
-  size: { xs: 12, sm: 14, md: 16, lg: 18, xl: 24, xxl: 30 },
-  weight: { regular: "400" as const, medium: "600" as const, bold: "700" as const },
+  size: {
+    xs: 12,
+    sm: 14,
+    md: 16,
+    lg: 18,
+    xl: 22,
+    xxl: 28,
+  },
+  weight: {
+    regular: "400" as const,
+    medium: "600" as const,
+    bold: "700" as const,
+  },
 } as const;
 
 export const tokens = {
@@ -20,41 +32,43 @@ export const tokens = {
     xl: 22,
   },
 
+  // “Glow” comedido. Em fintech premium, glow existe só como estado (focus/ativo).
   glow: {
-    primary: "rgba(124, 58, 237, 0.25)",
-    accent: "rgba(6, 182, 212, 0.25)",
-    soft: "rgba(124, 58, 237, 0.06)",
-    danger: "rgba(239, 68, 68, 0.25)",
-    success: "rgba(16, 185, 129, 0.25)",
+    primary: "rgba(79, 140, 255, 0.18)",
+    soft: "rgba(79, 140, 255, 0.06)",
+    danger: "rgba(255, 77, 79, 0.16)",
+    success: "rgba(38, 194, 129, 0.16)",
   },
 
   shadow: {
     card: {
       shadowColor: "#000000",
-      shadowOpacity: 0.30,
-      shadowRadius: 24,
+      shadowOpacity: 0.24,
+      shadowRadius: 18,
+      shadowOffset: { width: 0, height: 10 },
+      elevation: 10,
+    },
+    cardActive: {
+      shadowColor: "#000000",
+      shadowOpacity: 0.32,
+      shadowRadius: 22,
       shadowOffset: { width: 0, height: 12 },
       elevation: 12,
     },
-    cardActive: {
-      shadowColor: "#7C3AED",
-      shadowOpacity: 0.40,
-      shadowRadius: 32,
-      shadowOffset: { width: 0, height: 16 },
-      elevation: 16,
-    },
     inputFocus: {
-      shadowColor: "#7C3AED",
-      shadowOpacity: 0.30,
-      shadowRadius: 20,
+      shadowColor: "rgba(79, 140, 255, 0.35)",
+      shadowOpacity: 0.28,
+      shadowRadius: 18,
       shadowOffset: { width: 0, height: 8 },
       elevation: 8,
     },
   },
 
+  // Timing: causa → efeito. Sem “acrobacia”.
   motion: {
-    fast: 90,
-    normal: 140,
-    slow: 220,
+    press: 90,
+    fast: 140,
+    normal: 220,
+    slow: 280,
   },
 } as const;

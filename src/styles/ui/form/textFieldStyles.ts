@@ -19,16 +19,6 @@ export function makeTextFieldStyles(theme: AppTheme) {
       position: "relative",
     },
 
-    glowEffect: {
-      position: "absolute",
-      left: -4,
-      right: -4,
-      top: -4,
-      bottom: -4,
-      borderRadius: tokens.radii.md + 4,
-      backgroundColor: tokens.glow.primary,
-    },
-
     inputWrap: {
       borderWidth: 1,
       borderRadius: tokens.radii.md,
@@ -46,9 +36,7 @@ export function makeTextFieldStyles(theme: AppTheme) {
     },
 
     inputWrapFocused: {
-      backgroundColor: "rgba(124, 58, 237, 0.08)",
-      borderColor: "rgba(124, 58, 237, 0.80)",
-      ...tokens.shadow.inputFocus,
+      borderColor: colors.primary,
     },
 
     inputWrapError: {

@@ -1,15 +1,12 @@
-import React, { useEffect, useRef } from "react";
-import { View, Text, Animated, StyleSheet, Dimensions } from "react-native";
+import React, { useEffect, useMemo, useRef } from "react";
+import { Animated, StyleSheet, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import { useSuccessAnimation } from "../../../../animations/useSuccessAnimation";
-import { colors } from "../../../../shared/theme/colors";
-import { AppTheme } from "../../../../shared/theme/themes";
-import { typography } from "../../../../shared/theme/typography";
-import { spacing } from "../../../../shared/theme/spacing";
-import App from "../../../../../App";
 
-const { width, height } = Dimensions.get("window");
+import { useSuccessAnimation } from "../../../../animations/useSuccessAnimation";
+import { spacing, typography } from "../../../theme";
+import type { AppTheme } from "../../../theme/themes";
+import { useTheme } from "../../../theme/ThemeProvider";
 
 type Props = {
   visible: boolean;
@@ -17,51 +14,56 @@ type Props = {
   onComplete?: () => void;
 };
 
-export default function SuccessOverlay({ visible, message = "Sucesso!", onComplete }: Props) {
+export default function SuccessOverlay({
+  visible,
+  message = "Sucesso!",
+  onComplete,
+}: Props) {
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { scale, opacity, rotate, trigger } = useSuccessAnimation();
-  const fadeIn = useRef(new Animated.Value(0)).current;
+  const fade = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (visible) {
-      Animated.timing(fadeIn, {
-        toValue: 1,
-        duration: 200,
+    if (!visible) return;
+
+    Animated.timing(fade, {
+      toValue: 1,
+      duration: 180,
+      useNativeDriver: true,
+    }).start();
+
+    trigger();
+
+    const timer = setTimeout(() => {
+      Animated.timing(fade, {
+        toValue: 0,
+        duration: 220,
         useNativeDriver: true,
-      }).start();
+      }).start(() => onComplete?.());
+    }, 1400);
 
-      trigger();
-
-      const timer = setTimeout(() => {
-        Animated.timing(fadeIn, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }).start(() => {
-          onComplete?.();
-        });
-      }, 2000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [visible]);
+    return () => clearTimeout(timer);
+  }, [fade, onComplete, trigger, visible]);
 
   if (!visible) return null;
 
   return (
-    <Animated.View style={[styles.overlay, { opacity: fadeIn }]}>
-      <BlurView intensity={20} style={StyleSheet.absoluteFill} />
-      
+    <Animated.View style={[styles.overlay, { opacity: fade }]}>
+      <BlurView intensity={18} style={StyleSheet.absoluteFill} />
+
       <View style={styles.content}>
         <Animated.View
           style={[
             styles.iconContainer,
-            {
-              transform: [{ scale }, { rotate }],
-              opacity,
-            },
+            { transform: [{ scale }, { rotate }], opacity },
           ]}
         >
-          <MaterialIcons name="check-circle" size={80} color="#42E68A" />
+          <MaterialIcons
+            name="check-circle"
+            size={74}
+            color={theme.colors.success}
+          />
         </Animated.View>
 
         <Animated.Text style={[styles.message, { opacity }]}>
@@ -72,124 +74,36 @@ export default function SuccessOverlay({ visible, message = "Sucesso!", onComple
   );
 }
 
-const styles = StyleSheet.create({
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 9999,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  content: {
-    alignItems: "center",
-    gap: spacing.xl,
-  },
-
-  iconContainer: {
-    width: 120,
-    height: 120,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(66, 230, 138, 0.15)",
-    borderRadius: 60,
-    borderWidth: 3,
-    borderColor: "rgba(66, 230, 138, 0.4)",
-  },
-
-  message: {
-    color: "#FFFFFF",
-    fontSize: typography.size.xl,
-    fontWeight: typography.weight.bold,
-    textAlign: "center",
-  },
-  
-  formError: {
-      color: colors.danger,
-      fontSize: typography.size.sm,
-      fontWeight: typography.weight.medium,
-      flex: 1,
-    },
-
-    buttonContainer: {
-      marginTop: spacing.sm,
-    },
-
-    divider: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginVertical: spacing.md,
-      gap: spacing.md,
-    },
-
-    dividerLine: {
-      flex: 1,
-      height: 1,
-      backgroundColor: "rgba(234, 247, 239, 0.1)",
-    },
-
-    dividerText: {
-      color: colors.textMuted,
-      fontSize: typography.size.sm,
-      fontWeight: typography.weight.medium,
-    },
-
-    links: {
-      gap: spacing.sm,
-      alignItems: "center",
-    },
-
-    registerPrompt: {
-      flexDirection: "row",
+const makeStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    overlay: {
+      ...StyleSheet.absoluteFillObject,
+      zIndex: 9999,
       alignItems: "center",
       justifyContent: "center",
     },
 
-    registerText: {
-      color: colors.textMuted,
-      fontSize: typography.size.sm,
+    content: {
+      alignItems: "center",
+      gap: spacing.lg,
     },
 
-    hint: {
-      marginTop: spacing.xl,
-      color: colors.textMuted,
-      fontSize: typography.size.xs,
+    iconContainer: {
+      width: 120,
+      height: 120,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "rgba(16, 185, 129, 0.10)",
+      borderRadius: 60,
+      borderWidth: 1,
+      borderColor: "rgba(16, 185, 129, 0.35)",
+    },
+
+    message: {
+      color: theme.colors.text,
+      fontSize: typography.size.lg,
+      fontWeight: typography.weight.semibold,
       textAlign: "center",
-      opacity: 0.7,
+      maxWidth: 260,
     },
-
-    // Partículas decorativas
-    particle: {
-      position: "absolute",
-      width: 100,
-      height: 100,
-      borderRadius: 50,
-      opacity: 0.03,
-    },
-
-    particle1: {
-      backgroundColor: colors.primary,
-      top: "10%",
-      left: "10%",
-    },
-
-    particle2: {
-      backgroundColor: colors.primary,
-      top: "40%",
-      right: "5%",
-      width: 80,
-      height: 80,
-    },
-
-    particle3: {
-      backgroundColor: colors.primary,
-      bottom: "20%",
-      left: "15%",
-      width: 60,
-      height: 60,
-    },
-
-});
+  });

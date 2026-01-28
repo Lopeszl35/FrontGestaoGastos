@@ -37,21 +37,20 @@ export default function TotalSummaryCard({ limiteTotal, limiteUsado, gastosDoMes
       }),
     ]).start();
 
-    // Animação de pulso sutil no valor gasto
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.02,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
+    // Premium: micro-interação única (sem loop infinito)
+    Animated.sequence([
+      Animated.delay(250),
+      Animated.timing(pulseAnim, {
+        toValue: 1.01,
+        duration: 180,
+        useNativeDriver: true,
+      }),
+      Animated.timing(pulseAnim, {
+        toValue: 1,
+        duration: 180,
+        useNativeDriver: true,
+      }),
+    ]).start();
   }, []);
 
   const limiteDisponivel = limiteTotal - limiteUsado;

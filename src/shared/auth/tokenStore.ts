@@ -23,6 +23,15 @@ export function getAuthUser(): AuthUser | null {
 }
 
 /**
+ * Atualiza parcialmente o usuário em memória.
+ * Útil para manter o UserContext consistente após edição de perfil.
+ */
+export function updateAuthUser(partial: Partial<AuthUser>) {
+  if (!currentUser) return;
+  currentUser = { ...currentUser, ...partial };
+}
+
+/**
  * ✅ agora funciona com backend (id_usuario)
  * e mantém compatibilidade com legado (id)
  */

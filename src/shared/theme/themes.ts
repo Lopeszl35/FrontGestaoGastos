@@ -9,6 +9,7 @@ export type AppTheme = {
     bg: string;
     surface: string;
     surface2: string;
+    surfaceAlt: string;
     text: string;
     textTitle: string;
     textMuted: string;
@@ -37,29 +38,32 @@ export type AppTheme = {
 export const darkTheme: AppTheme = {
   name: "dark",
   colors: {
-    bg: "#0A0A0F",
-    surface: "#13131A",
-    surface2: "#1A1A24",
-    text: "#FFFFFF",
+    // Fintech premium — dark, calmo, “quase silencioso”
+    bg: "#0B1220",
+    surface: "#0F1B2D",
+    surface2: "#122340",
+    surfaceAlt: "#122340",
+    text: "#EAF0FF",
     textTitle: "#FFFFFF",
-    textMuted: "rgba(255, 255, 255, 0.60)",
-    textSubtle: "rgba(255, 255, 255, 0.40)",
+    textMuted: "rgba(234, 240, 255, 0.72)",
+    textSubtle: "rgba(234, 240, 255, 0.50)",
     border: "rgba(255, 255, 255, 0.08)",
 
-    primary: "#7C3AED",
-    primary2: "#6366F1",
-    accent: "#06B6D4",
-    accent2: "#0891B2",
-    danger: "#EF4444",
-    success: "#10B981",
-    warning: "#F59E0B",
-    info: "#3B82F6",
+    primary: "#4F8CFF",
+    primary2: "#2D5BFF",
+    accent: "#2EE0C2",
+    accent2: "#22C3A9",
+    danger: "#aa2f31",
+    success: "#26C281",
+    warning: "#F7B955",
+    info: "#5AA9FF",
 
     gradients: {
-      background: ["#0A0A0F", "#13131A", "#0A0A0F"],
-      button: ["#7C3AED", "#6366F1"],
-      buttonAccent: ["#06B6D4", "#0891B2"],
-      card: ["rgba(124, 58, 237, 0.08)", "rgba(99, 102, 241, 0.04)"],
+      // Mantemos gradients discretos (sem “neon”).
+      background: ["#0b1220", "#0D1630", "#0B1220"],
+      button: ["#4F8CFF", "#2D5BFF"],
+      buttonAccent: ["#2EE0C2", "#22C3A9"],
+      card: ["rgba(79, 140, 255, 0.10)", "rgba(79, 140, 255, 0.04)"],
     },
   },
   tokens,
@@ -68,29 +72,31 @@ export const darkTheme: AppTheme = {
 export const lightTheme: AppTheme = {
   name: "light",
   colors: {
-    bg: "#088a8f",
-    surface: "#0d0d0e",
-    surface2: "#F3F4F6",
-    text: "#ffffff",
-    textTitle: "#ffffff",
-    textMuted: "rgba(250, 250, 250, 0.78)",
-    textSubtle: "rgba(255, 255, 255, 0.4)",
-    border: "rgba(17, 24, 39, 0.08)",
+    // Mantido apenas por compatibilidade. MVP usa dark-only.
+    bg: "#0B1220",
+    surface: "#0F1B2D",
+    surface2: "#122340",
+    surfaceAlt: "#122340",
+    text: "#EAF0FF",
+    textTitle: "#FFFFFF",
+    textMuted: "rgba(234, 240, 255, 0.72)",
+    textSubtle: "rgba(234, 240, 255, 0.50)",
+    border: "rgba(255, 255, 255, 0.08)",
 
-    primary: "#7C3AED",
-    primary2: "#6366F1",
-    accent: "#0891B2",
-    accent2: "#0E7490",
-    danger: "#DC2626",
-    success: "#059669",
-    warning: "#D97706",
-    info: "#2563EB",
+    primary: "#4F8CFF",
+    primary2: "#2D5BFF",
+    accent: "#2EE0C2",
+    accent2: "#22C3A9",
+    danger: "#FF4D4F",
+    success: "#26C281",
+    warning: "#F7B955",
+    info: "#5AA9FF",
 
     gradients: {
-      background: ["#0f172a", "#0f172a", "#0f172a"],
-      button: ["#7C3AED", "#6366F1"],
-      buttonAccent: ["#0891B2", "#0E7490"],
-      card: ["rgba(124, 58, 237, 0.04)", "rgba(99, 102, 241, 0.02)"],
+      background: ["#0B1220", "#0D1630", "#0B1220"],
+      button: ["#4F8CFF", "#2D5BFF"],
+      buttonAccent: ["#2EE0C2", "#22C3A9"],
+      card: ["rgba(79, 140, 255, 0.08)", "rgba(79, 140, 255, 0.03)"],
     },
   },
   tokens,

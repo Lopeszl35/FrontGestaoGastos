@@ -1,38 +1,36 @@
-import React, { useRef, useEffect } from "react";
-import { View, Text, Pressable, Animated, StyleSheet } from "react-native";
+import React, { useMemo, useRef } from "react";
+import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import type { FinancialProfile } from "../../../../types/auth";
-import { spacing, typography, tokens } from "../../../theme";
 
-type ProfileOption = {
+import type { FinancialProfile } from "../../../../types/auth";
+import { spacing, typography, tokens, AppTheme } from "../../../theme";
+import { useTheme } from "../../../theme/ThemeProvider";
+
+type Option = {
   value: FinancialProfile;
   label: string;
-  icon: string;
-  color: string;
+  icon: keyof typeof MaterialIcons.glyphMap;
   description: string;
 };
 
-const PROFILES: ProfileOption[] = [
+const OPTIONS: Option[] = [
   {
     value: "CONSERVADOR",
     label: "Conservador",
     icon: "shield",
-    color: "#4A90E2",
-    description: "Foco em segurança e estabilidade",
+    description: "Segurança e previsibilidade.",
   },
   {
     value: "MODERADO",
     label: "Moderado",
     icon: "balance",
-    color: "#7B68EE",
-    description: "Equilíbrio entre risco e retorno",
+    description: "Equilíbrio entre risco e retorno.",
   },
   {
     value: "AGRESSIVO",
-    label: "Agressivo",
+    label: "Arrojado",
     icon: "trending-up",
-    color: "#FF6B6B",
-    description: "Maior potencial de crescimento",
+    description: "Mais risco, mais potencial de crescimento.",
   },
 ];
 
@@ -42,14 +40,17 @@ type Props = {
 };
 
 export default function ProfileSelector({ value, onChange }: Props) {
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+
   return (
     <View style={styles.container}>
-      {PROFILES.map((profile) => (
+      {OPTIONS.map((opt) => (
         <ProfileCard
-          key={profile.value}
-          profile={profile}
-          selected={value === profile.value}
-          onPress={() => onChange(profile.value)}
+          key={opt.value}
+          option={opt}
+          selected={value === opt.value}
+          onPress={() => onChange(opt.value)}
         />
       ))}
     </View>
@@ -57,119 +58,99 @@ export default function ProfileSelector({ value, onChange }: Props) {
 }
 
 function ProfileCard({
-  profile,
+  option,
   selected,
   onPress,
 }: {
-  profile: ProfileOption;
+  option: Option;
   selected: boolean;
   onPress: () => void;
 }) {
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+
   const scale = useRef(new Animated.Value(1)).current;
-  const borderOpacity = useRef(new Animated.Value(selected ? 1 : 0)).current;
 
-  useEffect(() => {
-    Animated.timing(borderOpacity, {
-      toValue: selected ? 1 : 0,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-  }, [selected]);
-
-  const handlePressIn = () => {
+  const onPressIn = () => {
     Animated.spring(scale, {
-      toValue: 0.97,
+      toValue: 0.985,
       useNativeDriver: true,
-      speed: 50,
+      speed: 30,
+      bounciness: 0,
     }).start();
   };
 
-  const handlePressOut = () => {
+  const onPressOut = () => {
     Animated.spring(scale, {
       toValue: 1,
       useNativeDriver: true,
-      speed: 40,
-      bounciness: 8,
+      speed: 30,
+      bounciness: 0,
     }).start();
   };
 
-  const borderColor = borderOpacity.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["rgba(234, 247, 239, 0.1)", profile.color],
-  });
+  const accent = selected ? theme.colors.primary : theme.colors.border;
+  const iconColor = selected ? theme.colors.primary : theme.colors.textMuted;
+  const bg = selected ? theme.colors.surface2 : theme.colors.surface;
 
   return (
-    <Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
-      <Animated.View
-        style={[
-          styles.card,
-          {
-            transform: [{ scale }],
-            borderColor,
-          },
-        ]}
-      >
-        <View style={[styles.iconContainer, { backgroundColor: `${profile.color}20` }]}>
-          <MaterialIcons name={profile.icon as any} size={28} color={profile.color} />
+    <Pressable onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut}>
+      <Animated.View style={[styles.card, { transform: [{ scale }], borderColor: accent, backgroundColor: bg }]}>
+        <View style={[styles.iconWrap, { borderColor: accent }]}
+        >
+          <MaterialIcons name={option.icon} size={22} color={iconColor} />
         </View>
 
         <View style={styles.content}>
-          <Text style={styles.label}>{profile.label}</Text>
-          <Text style={styles.description}>{profile.description}</Text>
+          <Text style={styles.label}>{option.label}</Text>
+          <Text style={styles.description}>{option.description}</Text>
         </View>
 
-        {selected && (
-          <Animated.View style={styles.checkContainer}>
-            <MaterialIcons name="check-circle" size={24} color={profile.color} />
-          </Animated.View>
+        {selected ? (
+          <MaterialIcons name="check-circle" size={22} color={theme.colors.primary} />
+        ) : (
+          <View style={{ width: 22, height: 22 }} />
         )}
       </Animated.View>
     </Pressable>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    gap: spacing.sm,
-  },
-
-  card: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(234, 247, 239, 0.03)",
-    borderWidth: 2,
-    borderRadius: tokens.radii.md,
-    padding: spacing.md,
-    gap: spacing.md,
-  },
-
-  iconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  content: {
-    flex: 1,
-    gap: 4,
-  },
-
-  label: {
-    color: "rgba(255, 255, 255, 0.92)",
-    fontSize: typography.size.md,
-    fontWeight: typography.weight.bold,
-  },
-
-  description: {
-    color: "rgba(255, 255, 255, 0.60)",
-    fontSize: typography.size.xs,
-    lineHeight: 16,
-  },
-
-  checkContainer: {
-    width: 28,
-    height: 28,
-  },
-});
+const makeStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      gap: spacing.sm,
+    },
+    card: {
+      flexDirection: "row",
+      alignItems: "center",
+      borderWidth: 1,
+      borderRadius: tokens.radii.md,
+      paddingVertical: spacing.md,
+      paddingHorizontal: spacing.md,
+      gap: spacing.md,
+    },
+    iconWrap: {
+      width: 44,
+      height: 44,
+      borderRadius: 14,
+      alignItems: "center",
+      justifyContent: "center",
+      borderWidth: 1,
+      backgroundColor: "rgba(255,255,255,0.02)",
+    },
+    content: {
+      flex: 1,
+      gap: 2,
+    },
+    label: {
+      color: theme.colors.text,
+      fontSize: typography.size.md,
+      fontWeight: typography.weight.bold,
+    },
+    description: {
+      color: theme.colors.textMuted,
+      fontSize: typography.size.xs,
+      lineHeight: 16,
+    },
+  });

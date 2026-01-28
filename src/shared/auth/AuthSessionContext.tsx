@@ -2,7 +2,13 @@
 
 import React, { createContext, useContext, useMemo, useState } from "react";
 import type { AuthResult } from "../../types/auth";
-import { setAuthResult, clearAuth, getAuthToken, getAuthUser } from "./tokenStore";
+import {
+  setAuthResult,
+  clearAuth,
+  getAuthToken,
+  getAuthUser,
+  updateAuthUser,
+} from "./tokenStore";
 
 type AuthSessionContextValue = {
   session: AuthResult | null;
@@ -10,6 +16,9 @@ type AuthSessionContextValue = {
   user: ReturnType<typeof getAuthUser>;
   isAuthenticated: boolean;
   signIn: (result: AuthResult) => void;
+  updateUser: (
+    partial: Partial<NonNullable<ReturnType<typeof getAuthUser>>>
+  ) => void;
   signOut: () => void;
   logout: () => void;
 };
@@ -42,6 +51,12 @@ export function AuthSessionProvider({ children }: { children: React.ReactNode })
       signIn: (result) => {
         setAuthResult(result);
         setSession(result);
+      },
+      updateUser: (partial) => {
+        updateAuthUser(partial);
+        setSession((prev) =>
+          prev ? ({ ...prev, user: { ...prev.user, ...partial } } as AuthResult) : prev
+        );
       },
       signOut: performLogout,
       logout: performLogout,

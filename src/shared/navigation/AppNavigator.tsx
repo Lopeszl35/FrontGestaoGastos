@@ -1,20 +1,36 @@
 // src/shared/navigation/AppNavigator.tsx
-
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import type { AppStackParamList } from "../../types/navigation";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 
-import HomeScreen from "../../screens/app/HomeScreen";
-import CreditCardsScreen from "../../screens/app/CreditCardsScreen";
+import type { AppDrawerParamList } from "../../types/navigation";
+import { useTheme } from "../theme/ThemeProvider";
 
-const Stack = createNativeStackNavigator<AppStackParamList>();
+import AppTabsNavigator from "./AppTabsNavigator";
+import AppDrawerContent from "./drawer/AppDrawerContent";
+
+const Drawer = createDrawerNavigator<AppDrawerParamList>();
 
 export default function AppNavigator() {
+  const { theme } = useTheme();
+
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false, animation: "fade" }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="CreditCards" component={CreditCardsScreen} />
-      {/* Outras telas serão adicionadas aqui */}
-    </Stack.Navigator>
+    <Drawer.Navigator
+      screenOptions={{
+        headerShown: false,
+        drawerPosition: "right",
+        drawerType: "slide",
+        overlayColor: "rgba(0,0,0,0.35)",
+        drawerStyle: {
+          backgroundColor: theme.colors.surface,
+          width: 300,
+        },
+        drawerContentStyle: {
+          backgroundColor: theme.colors.surface,
+        },
+      }}
+      drawerContent={(props) => <AppDrawerContent {...props} />}
+    >
+      <Drawer.Screen name="Tabs" component={AppTabsNavigator} />
+    </Drawer.Navigator>
   );
 }

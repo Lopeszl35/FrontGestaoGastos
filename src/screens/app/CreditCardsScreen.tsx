@@ -14,7 +14,6 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../shared/theme/ThemeProvider';
 import { useAuthSession } from '../../shared/auth/AuthSessionContext';
-import ScreenBackground from '../../shared/ui/components/layout/ScreenBackground';
 import CreditCardItem from '../../shared/ui/components/creditCards/CreditCardItem';
 import CreditCardDetails from '../../shared/ui/components/creditCards/CreditCardDetails';
 import TotalSummaryCard from '../../shared/ui/components/creditCards/TotalSummaryCard';
@@ -65,7 +64,7 @@ export default function CreditCardsScreen() {
 
   // ✅ Função para calcular totais
   const calculateTotals = () => {
-    const limiteTotal = cards.reduce((sum, card) => sum + (card.limiteTotal || 0), 0);
+    const limiteTotal = cards.reduce((sum, card) => sum + (typeof card.limite === 'string' ? parseFloat(card.limite) : card.limite) || 0, 0);
     const limiteUsado = cards.reduce((sum, card) => sum + (card.limiteUsado || 0), 0);
     
     // Soma os gastos de todos os cartões no mês selecionado
@@ -234,21 +233,21 @@ export default function CreditCardsScreen() {
 
   if (loading) {
     return (
-      <ScreenBackground>
+      <View style={styles.full}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
           <Text style={[styles.loadingText, { color: theme.colors.textMuted }]}>
             Carregando cartões...
           </Text>
         </View>
-      </ScreenBackground>
+      </View>
     );
   }
 
   // ✅ TELA VAZIA REDESENHADA
   if (cards.length === 0) {
     return (
-      <ScreenBackground>
+      <View style={styles.full}>
         <View style={styles.emptyContainer}>
           <View style={styles.emptyIllustration}>
             <LinearGradient
@@ -311,7 +310,7 @@ export default function CreditCardsScreen() {
           onClose={() => setIsAddModalVisible(false)}
           onSuccess={handleModalSuccess}
         />
-      </ScreenBackground>
+      </View>
     );
   }
 
@@ -320,7 +319,7 @@ export default function CreditCardsScreen() {
   const mesAnoFormatado = `${MESES[selectedMonth - 1]} ${selectedYear}`;
 
   return (
-    <ScreenBackground>
+    <View style={styles.full}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.content}
@@ -478,6 +477,6 @@ export default function CreditCardsScreen() {
         card={selectedCard}
         valorFatura={valorFatura}
       />
-    </ScreenBackground>
+    </View>
   );
 }

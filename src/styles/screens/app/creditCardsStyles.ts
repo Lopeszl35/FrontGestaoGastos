@@ -6,6 +6,9 @@ import { spacing, typography, tokens } from '../../../shared/theme/tokens';
 
 export function makeCreditCardsStyles(theme: AppTheme) {
   return StyleSheet.create({
+    full: {
+      flex: 1,
+    },
     container: {
       flex: 1,
     },

@@ -1,43 +1,36 @@
-import React, { useRef, useEffect, useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   View,
-  Animated,
-  Pressable,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { LinearGradient } from "expo-linear-gradient";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Picker } from "@react-native-picker/picker";
 
-import AuthBrandHeader from "../../../../shared/ui/components/branding/AuthBrandHeader";
 import type { AuthStackParamList } from "../../../../types/navigation";
+import { useTheme } from "../../../../shared/theme/ThemeProvider";
+import { spacing, typography, tokens } from "../../../../shared/theme";
 import ScreenBackground from "../../../../shared/ui/components/layout/ScreenBackground";
+import AuthBrandHeader from "../../../../shared/ui/components/branding/AuthBrandHeader";
+import Card from "../../../../shared/ui/components/layout/Card";
 import TextField from "../../../../shared/ui/components/form/TextField";
 import PasswordField from "../../../../shared/ui/components/form/PasswordField";
-import LinkButton from "../../../../shared/ui/components/buttons/LinkButton";
+import ProfileSelector from "../../../../shared/ui/components/form/ProfileSelector";
 import AppButton from "../../../../shared/ui/components/buttons/AppButton";
+import LinkButton from "../../../../shared/ui/components/buttons/LinkButton";
 import { useRegisterController } from "../controllers/useRegisterController";
-import { makeRegisterStyles } from "../../../../styles/screens/auth/registerStyles";
-import { useTheme } from "../../../../shared/theme/ThemeProvider";
-import type { FinancialProfile } from "../../../../types/auth";
+import type { AppTheme } from "../../../../shared/theme/themes";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Register">;
 
-const PROFILE_OPTIONS: { value: FinancialProfile; label: string; icon: string; color: string }[] = [
-  { value: "CONSERVADOR", label: "Conservador", icon: "shield", color: "#4A90E2" },
-  { value: "MODERADO", label: "Moderado", icon: "balance", color: "#7B68EE" },
-  { value: "AGRESSIVO", label: "Agressivo", icon: "trending-up", color: "#FF6B6B" },
-];
-
 export default function RegisterScreen({ navigation }: Props) {
-  const { state, actions, derived } = useRegisterController();
   const { theme } = useTheme();
-  const styles = useMemo(() => makeRegisterStyles(theme), [theme]);
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+
+  const { state, actions, derived } = useRegisterController();
 
   const nameRef = useRef<TextInput>(null);
   const emailRef = useRef<TextInput>(null);
@@ -46,59 +39,6 @@ export default function RegisterScreen({ navigation }: Props) {
   const salaryRef = useRef<TextInput>(null);
   const balanceRef = useRef<TextInput>(null);
 
-  // Animações
-  const fadeIn = useRef(new Animated.Value(0)).current;
-  const slideUp = useRef(new Animated.Value(50)).current;
-  const cardScale = useRef(new Animated.Value(0.9)).current;
-  const progressWidth = useRef(new Animated.Value(0)).current;
-
-  // Calcula progresso do formulário
-  const calculateProgress = () => {
-    let filled = 0;
-    const total = 6;
-
-    if (state.fullName.trim()) filled++;
-    if (state.email.trim()) filled++;
-    if (state.password) filled++;
-    if (state.confirmPassword) filled++;
-    if (state.salaryText || state.initialBalanceText) filled++;
-    filled++; // perfil sempre tem valor
-
-    return (filled / total) * 100;
-  };
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeIn, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.spring(slideUp, {
-        toValue: 0,
-        useNativeDriver: true,
-        speed: 8,
-        bounciness: 10,
-      }),
-      Animated.spring(cardScale, {
-        toValue: 1,
-        useNativeDriver: true,
-        speed: 10,
-        bounciness: 8,
-        delay: 200,
-      }),
-    ]).start();
-  }, []);
-
-  useEffect(() => {
-    const progress = calculateProgress();
-    Animated.timing(progressWidth, {
-      toValue: progress,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-  }, [state]);
-
   return (
     <ScreenBackground>
       <KeyboardAvoidingView
@@ -106,247 +46,189 @@ export default function RegisterScreen({ navigation }: Props) {
         style={styles.kav}
       >
         <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="always"
-          keyboardDismissMode="none"
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
-          nestedScrollEnabled={true}
-          scrollEnabled={true}
         >
-          {/* Header */}
-          <Animated.View
-            style={[
-              styles.header,
-              {
-                opacity: fadeIn,
-                transform: [{ translateY: slideUp }],
-              },
-            ]}
-          >
+          <View style={styles.header}>
             <AuthBrandHeader
-              title="Bem-vindo ao Konta"
-              subtitle="Crie sua conta e organize seu dinheiro com clareza desde o primeiro dia."
+              title="Criar conta"
+              subtitle="Comece pelo essencial. Você ajusta o resto quando quiser." 
             />
-          </Animated.View>
+          </View>
 
-          {/* Barra de progresso */}
-          <Animated.View
-            style={[styles.progressContainer, { opacity: fadeIn }]}
-          >
-            <View style={styles.progressBar}>
-              <Animated.View
-                style={[
-                  styles.progressFill,
-                  {
-                    width: progressWidth.interpolate({
-                      inputRange: [0, 100],
-                      outputRange: ["0%", "100%"],
-                    }),
-                  },
-                ]}
+          <Card style={styles.card}>
+            {!!state.submitError && (
+              <View style={styles.errorBox}>
+                <Text style={styles.errorText}>{state.submitError}</Text>
+              </View>
+            )}
+
+            <Text style={styles.sectionLabel}>Dados</Text>
+
+            <TextField
+              label="Nome completo"
+              value={state.fullName}
+              onChangeText={actions.setFullName}
+              error={state.errors.fullName ?? null}
+              placeholder="Seu nome"
+              leftIconName="person"
+              ref={nameRef}
+              returnKeyType="next"
+              onSubmitEditing={() => emailRef.current?.focus()}
+            />
+
+            <TextField
+              label="E-mail"
+              value={state.email}
+              onChangeText={actions.setEmail}
+              error={state.errors.email ?? null}
+              placeholder="voce@exemplo.com"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              leftIconName="email"
+              ref={emailRef}
+              returnKeyType="next"
+              onSubmitEditing={() => passRef.current?.focus()}
+            />
+
+            <View style={{ height: spacing.md }} />
+            <Text style={styles.sectionLabel}>Segurança</Text>
+
+            <PasswordField
+              ref={passRef}
+              label="Senha"
+              value={state.password}
+              onChangeText={actions.setPassword}
+              error={state.errors.password ?? null}
+              placeholder="mínimo 8 caracteres"
+              returnKeyType="next"
+              onSubmitEditing={() => confirmRef.current?.focus()}
+            />
+
+            <PasswordField
+              ref={confirmRef}
+              label="Confirmar senha"
+              value={state.confirmPassword}
+              onChangeText={actions.setConfirmPassword}
+              error={state.errors.confirmPassword ?? null}
+              placeholder="repita sua senha"
+              returnKeyType="next"
+              onSubmitEditing={() => salaryRef.current?.focus()}
+            />
+
+            <View style={{ height: spacing.md }} />
+            <Text style={styles.sectionLabel}>Financeiro (opcional)</Text>
+
+            <TextField
+              ref={salaryRef}
+              label="Salário mensal"
+              value={state.salaryText}
+              onChangeText={actions.setSalaryText}
+              error={state.errors.salary ?? null}
+              placeholder="ex.: 3500,00"
+              keyboardType="numeric"
+              leftIconName="attach-money"
+              returnKeyType="next"
+              onSubmitEditing={() => balanceRef.current?.focus()}
+            />
+
+            <TextField
+              ref={balanceRef}
+              label="Saldo inicial"
+              value={state.initialBalanceText}
+              onChangeText={actions.setInitialBalanceText}
+              error={state.errors.initialBalance ?? null}
+              placeholder="ex.: 1500,00"
+              keyboardType="numeric"
+              leftIconName="account-balance-wallet"
+              returnKeyType="done"
+              onSubmitEditing={actions.submit}
+            />
+
+            <View style={{ marginTop: spacing.md }}>
+              <Text style={styles.sectionLabel}>Perfil de investimento</Text>
+              <ProfileSelector value={state.financialProfile} onChange={actions.setFinancialProfile} />
+            </View>
+
+            <View style={{ marginTop: spacing.lg }}>
+              <AppButton
+                title={state.loading ? "Criando…" : "Criar conta"}
+                onPress={actions.submit}
+                loading={state.loading}
+                disabled={!derived.canSubmit}
               />
             </View>
-            <Text style={styles.progressText}>
-              {Math.round(calculateProgress())}% completo
-            </Text>
-          </Animated.View>
 
-          {/* Card principal */}
-          <Animated.View
-            style={{
-              opacity: fadeIn,
-              transform: [{ scale: cardScale }],
-            }}
-          >
-            <View style={styles.cardGlow} />
-            <View style={styles.card}>
-              <LinearGradient
-                colors={[
-                  "rgba(0, 0, 0, 0.95)",
-                  "rgb(0, 0, 0)",
-                ]}
-                style={styles.cardGradient}
-              >
-                <View style={styles.cardInner}>
-                  {/* Seção: Informações Básicas */}
-                  <View style={styles.section}>
-                    <View style={styles.sectionHeader}>
-                      <MaterialIcons name="person" size={20} color={theme.colors.primary} />
-                      <Text style={styles.sectionTitle}>Informações Básicas</Text>
-                    </View>
-
-                    <TextField
-                      label="Nome completo"
-                      value={state.fullName}
-                      onChangeText={actions.setFullName}
-                      error={state.errors.fullName ?? null}
-                      placeholder="Seu nome e sobrenome"
-                      leftIconName="person"
-                      ref={nameRef}
-                      returnKeyType="next"
-                      onSubmitEditing={() => emailRef.current?.focus()}
-                    />
-
-                    <TextField
-                      label="E-mail"
-                      value={state.email}
-                      onChangeText={actions.setEmail}
-                      error={state.errors.email ?? null}
-                      placeholder="voce@exemplo.com"
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      leftIconName="email"
-                      ref={emailRef}
-                      returnKeyType="next"
-                      onSubmitEditing={() => passRef.current?.focus()}
-                    />
-                  </View>
-
-                  {/* Seção: Segurança */}
-                  <View style={styles.section}>
-                    <View style={styles.sectionHeader}>
-                      <MaterialIcons name="lock" size={20} color={theme.colors.primary} />
-                      <Text style={styles.sectionTitle}>Segurança</Text>
-                    </View>
-
-                    <PasswordField
-                      label="Senha"
-                      value={state.password}
-                      onChangeText={actions.setPassword}
-                      error={state.errors.password ?? null}
-                      placeholder="mínimo 8 caracteres"
-                      ref={passRef}
-                      returnKeyType="next"
-                      onSubmitEditing={() => confirmRef.current?.focus()}
-                    />
-
-                    <PasswordField
-                      label="Confirmar senha"
-                      value={state.confirmPassword}
-                      onChangeText={actions.setConfirmPassword}
-                      error={state.errors.confirmPassword ?? null}
-                      placeholder="repita sua senha"
-                      ref={confirmRef}
-                      returnKeyType="next"
-                      onSubmitEditing={() => salaryRef.current?.focus()}
-                    />
-                  </View>
-
-                  {/* Seção: Dados Financeiros */}
-                  <View style={styles.section}>
-                    <View style={styles.sectionHeader}>
-                      <MaterialIcons name="account-balance-wallet" size={20} color={theme.colors.primary} />
-                      <Text style={styles.sectionTitle}>Dados Financeiros</Text>
-                      <Text style={styles.sectionBadge}>Opcional</Text>
-                    </View>
-
-                    <TextField
-                      label="Salário mensal"
-                      value={state.salaryText}
-                      onChangeText={actions.setSalaryText}
-                      error={state.errors.salary ?? null}
-                      placeholder="ex.: 3500,00"
-                      keyboardType="numeric"
-                      leftIconName="attach-money"
-                      ref={salaryRef}
-                      returnKeyType="next"
-                      onSubmitEditing={() => balanceRef.current?.focus()}
-                    />
-
-                    <TextField
-                      label="Saldo inicial"
-                      value={state.initialBalanceText}
-                      onChangeText={actions.setInitialBalanceText}
-                      error={state.errors.initialBalance ?? null}
-                      placeholder="ex.: 1200,00"
-                      keyboardType="numeric"
-                      leftIconName="account-balance"
-                      ref={balanceRef}
-                      returnKeyType="done"
-                      onSubmitEditing={actions.submit}
-                    />
-                  </View>
-
-                  {/* Seção: Perfil Financeiro */}
-                  <View style={styles.section}>
-                    <View style={styles.sectionHeader}>
-                      <MaterialIcons name="psychology" size={20} color={theme.colors.primary} />
-                      <Text style={styles.sectionTitle}>Perfil Financeiro</Text>
-                    </View>
-
-                    <View style={styles.profileCards}>
-                      {PROFILE_OPTIONS.map((option) => (
-                        <Pressable
-                          key={option.value}
-                          onPress={() => actions.setFinancialProfile(option.value)}
-                          style={[
-                            styles.profileCard,
-                            state.financialProfile === option.value && styles.profileCardActive,
-                          ]}
-                        >
-                          <View
-                            style={[
-                              styles.profileIconContainer,
-                              { backgroundColor: `${option.color}20` },
-                            ]}
-                          >
-                            <MaterialIcons
-                              name={option.icon as any}
-                              size={24}
-                              color={option.color}
-                            />
-                          </View>
-                          <Text style={styles.profileLabel}>{option.label}</Text>
-                          {state.financialProfile === option.value && (
-                            <View style={styles.profileCheck}>
-                              <MaterialIcons name="check-circle" size={20} color={theme.colors.primary} />
-                            </View>
-                          )}
-                        </Pressable>
-                      ))}
-                    </View>
-                    <Text style={styles.helper}>
-                      💡 Isso ajustará metas e sugestões personalizadas no futuro.
-                    </Text>
-                  </View>
-
-                  {/* Error global */}
-                  {!!state.submitError && (
-                    <View style={styles.errorBox}>
-                      <MaterialIcons name="error-outline" size={20} color={theme.colors.danger} />
-                      <Text style={styles.formError}>{state.submitError}</Text>
-                    </View>
-                  )}
-
-                  {/* Botão de registro */}
-                  <View style={styles.buttonContainer}>
-                    <AppButton
-                      title={state.loading ? "Criando conta…" : "Criar minha conta"}
-                      onPress={actions.submit}
-                      disabled={!derived.canSubmit}
-                      loading={state.loading}
-                      variant="primary"
-                    />
-                  </View>
-
-                  {/* Link voltar */}
-                  <View style={styles.backContainer}>
-                    <Text style={styles.backText}>Já tem conta? </Text>
-                    <LinkButton
-                      title="Fazer login"
-                      onPress={() => navigation.goBack()}
-                      align="center"
-                    />
-                  </View>
-                </View>
-              </LinearGradient>
+            <View style={styles.footer}>
+              <Text style={styles.footerText}>Já tem conta?</Text>
+              <LinkButton title="Entrar" onPress={() => navigation.navigate("Login")} />
             </View>
-          </Animated.View>
+          </Card>
 
-          {/* Espaçamento extra */}
-          <View style={{ height: 40 }} />
+          <Text style={styles.disclaimer}>
+            Use uma senha forte. Evite repetir senhas de outros serviços.
+          </Text>
         </ScrollView>
       </KeyboardAvoidingView>
     </ScreenBackground>
   );
 }
+
+const makeStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    kav: { flex: 1 },
+    content: {
+      padding: spacing.lg,
+      paddingBottom: spacing.xl,
+    },
+    header: {
+      marginTop: spacing.lg,
+      marginBottom: spacing.md,
+    },
+    card: {
+      padding: spacing.lg,
+      borderRadius: tokens.radii.lg,
+    },
+    sectionLabel: {
+      color: theme.colors.textSubtle,
+      fontSize: typography.size.xs,
+      fontWeight: "800",
+      letterSpacing: 1.1,
+      textTransform: "uppercase",
+      marginBottom: spacing.sm,
+    },
+    errorBox: {
+      backgroundColor: "rgba(255, 77, 109, 0.10)",
+      borderColor: "rgba(255, 77, 109, 0.25)",
+      borderWidth: 1,
+      borderRadius: tokens.radii.md,
+      padding: spacing.md,
+      marginBottom: spacing.md,
+    },
+    errorText: {
+      color: theme.colors.danger,
+      fontSize: typography.size.sm,
+      fontWeight: "700",
+      lineHeight: 18,
+    },
+    footer: {
+      marginTop: spacing.lg,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: spacing.sm,
+    },
+    footerText: {
+      color: theme.colors.textMuted,
+      fontSize: typography.size.sm,
+      fontWeight: "600",
+    },
+    disclaimer: {
+      marginTop: spacing.lg,
+      textAlign: "center",
+      color: theme.colors.textSubtle,
+      fontSize: typography.size.xs,
+      lineHeight: 16,
+    },
+  });

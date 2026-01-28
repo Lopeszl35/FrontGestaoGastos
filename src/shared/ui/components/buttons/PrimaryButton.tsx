@@ -1,7 +1,7 @@
 import React from "react";
 import { ActivityIndicator, Pressable, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { colors } from "../../../theme";
+import { colors } from "../../../theme/colors";
 import { styles } from "../../../../styles/ui/buttons/primaryButtonStyles";
 
 type Props = {

@@ -12,25 +12,23 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../../shared/theme/ThemeProvider';
 import { useAuthSession } from '../../shared/auth/AuthSessionContext';
-import ScreenBackground from '../../shared/ui/components/layout/ScreenBackground';
+// Home não controla navegação global — isso é responsabilidade do Drawer + Tabs.
 import BalanceCard from '../../shared/ui/components/dashboard/BalanceCard';
 import QuickStatsCard from '../../shared/ui/components/dashboard/QuickStatsCard';
 import ExpenseBreakdown from '../../shared/ui/components/dashboard/ExpenseBreakdown';
 import TransactionItem from '../../shared/ui/components/dashboard/TransactionItem';
 import AIInsightCard from '../../shared/ui/components/dashboard/AIInsightCard';
-import NavigationMenu from '../../shared/ui/components/navigation/NavigationMenu';
-import NavigationFAB from '../../shared/ui/components/navigation/NavigationFAB';
 import { dashboardService } from '../../services/dashboardService';
 import type { DashboardData } from '../../types/dashboard';
 import { spacing, typography } from '../../shared/theme/tokens';
 
 export default function HomeScreen() {
   const { theme } = useTheme();
-  const { logout } = useAuthSession();
+  const { user } = useAuthSession();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [menuVisible, setMenuVisible] = useState(false);
+  // Menu agora é global (Drawer). A Home não controla mais esse estado.
 
   const loadData = async () => {
     try {
@@ -54,38 +52,28 @@ export default function HomeScreen() {
   };
 
 
-  const handleLogout = () => {
-    logout();
-  };
-
   if (loading) {
     return (
-      <ScreenBackground>
+      <View style={styles.full}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text style={[styles.loadingText, { color: theme.colors.textMuted }]}>
-            Carregando seus dados...
-          </Text>
+          <Text style={[styles.loadingText, { color: theme.colors.textMuted }]}>Carregando seus dados...</Text>
         </View>
-      </ScreenBackground>
+      </View>
     );
   }
 
   if (!data) {
     return (
-      <ScreenBackground>
+      <View style={styles.full}>
         <View style={styles.errorContainer}>
           <MaterialIcons name="error-outline" size={48} color={theme.colors.danger} />
-          <Text style={[styles.errorText, { color: theme.colors.text }]}>
-            Erro ao carregar dados
-          </Text>
+          <Text style={[styles.errorText, { color: theme.colors.text }]}>Erro ao carregar dados</Text>
           <Pressable onPress={loadData} style={styles.retryButton}>
-            <Text style={[styles.retryText, { color: theme.colors.primary }]}>
-              Tentar novamente
-            </Text>
+            <Text style={[styles.retryText, { color: theme.colors.primary }]}>Tentar novamente</Text>
           </Pressable>
         </View>
-      </ScreenBackground>
+      </View>
     );
   }
 
@@ -101,7 +89,7 @@ export default function HomeScreen() {
   ];
 
   return (
-    <ScreenBackground>
+    <View style={styles.full}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.content}
@@ -122,7 +110,7 @@ export default function HomeScreen() {
               Olá,
             </Text>
             <Text style={[styles.userName, { color: theme.colors.text }]}>
-              {usuario.nome}
+              {user?.nome ?? usuario.nome}
             </Text>
           </View>
           <Pressable style={styles.notificationButton}>
@@ -196,24 +184,14 @@ export default function HomeScreen() {
         {/* Bottom Spacing for FAB */}
         <View style={{ height: 100 }} />
       </ScrollView>
-
-      {/* Navigation FAB */}
-      <NavigationFAB
-        onPress={() => setMenuVisible(!menuVisible)}
-        isMenuOpen={menuVisible}
-      />
-
-      {/* Navigation Menu */}
-      <NavigationMenu
-        visible={menuVisible}
-        onClose={() => setMenuVisible(false)}
-        onLogout={handleLogout}
-      />
-    </ScreenBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  full: {
+    flex: 1,
+  },
   container: {
     flex: 1,
   },

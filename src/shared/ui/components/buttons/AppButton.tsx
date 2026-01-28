@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React, { useMemo } from "react";
 import { ActivityIndicator, Animated, Pressable, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "../../../theme/ThemeProvider";
@@ -21,32 +21,9 @@ export default function AppButton({ title, onPress, loading, disabled, variant =
   
   const isDisabled = !!disabled || !!loading;
   const { scale, opacity, pressIn, pressOut } = useButtonPress();
-  const glowPulse = useRef(new Animated.Value(0)).current;
-
-  // Pulso contínuo no glow quando não está desabilitado
-  React.useEffect(() => {
-    if (!isDisabled) {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(glowPulse, {
-            toValue: 1,
-            duration: 2000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(glowPulse, {
-            toValue: 0,
-            duration: 2000,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    }
-  }, [isDisabled]);
-
-  const glowOpacity = glowPulse.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.15, 0.28],
-  });
+  // Fintech premium: nada de pulso infinito (cansa e parece “app gamer”).
+  // Mantemos um glow discreto e estático.
+  const glowOpacity = isDisabled ? 0 : 0.18;
 
   const variantWrap = useMemo(() => {
     if (variant === "danger") return styles.wrapDanger;

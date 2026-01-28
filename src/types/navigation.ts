@@ -1,20 +1,26 @@
-export type RootStackParamList = {
-  Auth: undefined;
-  App: undefined;
-};
+// src/types/navigation.ts
+import type { NavigatorScreenParams } from "@react-navigation/native";
 
 export type AuthStackParamList = {
   Login: undefined;
   Register: undefined;
 };
 
-export type AppStackParamList = {
+export type AppTabsParamList = {
   Home: undefined;
   CreditCards: undefined;
-  VariableExpenses: undefined;
-  FixedExpenses: undefined;
-  Financing: undefined;
-  Income: undefined;
-  RecurringExpenses: undefined;
-  PaymentReminders: undefined;
+  Profile: undefined;
+};
+
+/**
+ * Drawer apenas controla a sidebar.
+ * A navegação principal é o Tabs.
+ */
+export type AppDrawerParamList = {
+  Tabs: NavigatorScreenParams<AppTabsParamList>;
+};
+
+export type RootStackParamList = {
+  Auth: NavigatorScreenParams<AuthStackParamList>;
+  App: NavigatorScreenParams<AppDrawerParamList>;
 };

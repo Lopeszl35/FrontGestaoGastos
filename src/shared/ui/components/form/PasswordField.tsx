@@ -3,7 +3,7 @@ import { Pressable, TextInput, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import TextField from "./TextField";
-import { colors } from "../../../theme";
+import { useTheme } from "../../../theme/ThemeProvider";
 import { styles } from "../../../../styles/ui/form/passwordFieldStyles";
 
 type Props = {
@@ -20,6 +20,7 @@ const PasswordField = forwardRef<TextInput, Props>(function PasswordField(
   { label, value, onChangeText, error, placeholder, onSubmitEditing, returnKeyType = "done" },
   ref
 ) {
+  const { theme } = useTheme();
   const [show, setShow] = useState(false);
 
   return (
@@ -41,7 +42,7 @@ const PasswordField = forwardRef<TextInput, Props>(function PasswordField(
         <MaterialIcons
           name={show ? "visibility-off" : "visibility"}
           size={20}
-          color={colors.textMuted}
+          color={theme.colors.textMuted}
         />
       </Pressable>
     </View>

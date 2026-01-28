@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
-import { colors, spacing, typography, tokens } from "../../../shared/theme";
-import { AppTheme } from "../../../shared/theme";
+import type { AppTheme } from "../../../shared/theme/themes";
+import { spacing, typography, tokens } from "../../../shared/theme/tokens";
 
 export function makeAppButtonStyles(theme: AppTheme) {
   const { colors } = theme;
@@ -27,13 +27,13 @@ export function makeAppButtonStyles(theme: AppTheme) {
     wrapPrimary: {},
     wrapOutline: {
       borderWidth: 1,
-      borderColor: "rgba(139, 92, 246, 0.40)",
-      backgroundColor: "rgba(139, 92, 246, 0.05)",
+      borderColor: `${colors.primary}55`,
+      backgroundColor: `${colors.primary}10`,
     },
     wrapDanger: {
       borderWidth: 1,
-      borderColor: "rgba(244, 63, 94, 0.40)",
-      backgroundColor: "rgba(244, 63, 94, 0.08)",
+      borderColor: `${colors.danger}55`,
+      backgroundColor: `${colors.danger}12`,
     },
 
     gradient: {

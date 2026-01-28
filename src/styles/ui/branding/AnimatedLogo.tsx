@@ -1,51 +1,45 @@
-import React, { useEffect, useRef } from "react";
-import { Animated, Image, View, StyleSheet } from "react-native";
+import React, { useEffect, useMemo, useRef } from "react";
+import { Animated, Image, StyleSheet } from "react-native";
 
+import { useTheme } from "../../../shared/theme/ThemeProvider";
+import type { AppTheme } from "../../../shared/theme/themes";
+
+/**
+ * Logo animado apenas na entrada (sem loop).
+ * "Calmo, elegante, quase silencioso": nada de pulso infinito.
+ */
 export default function AnimatedLogo() {
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+
   const fadeIn = useRef(new Animated.Value(0)).current;
-  const scale = useRef(new Animated.Value(0.8)).current;
+  const scale = useRef(new Animated.Value(0.92)).current;
   const rotate = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeIn, {
         toValue: 1,
-        duration: 600,
+        duration: 450,
         useNativeDriver: true,
       }),
       Animated.spring(scale, {
         toValue: 1,
         useNativeDriver: true,
-        speed: 8,
-        bounciness: 12,
+        speed: 12,
+        bounciness: 6,
       }),
       Animated.timing(rotate, {
         toValue: 1,
-        duration: 800,
+        duration: 600,
         useNativeDriver: true,
       }),
-    ]).start(() => {
-      // Sutil pulso contínuo
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(scale, {
-            toValue: 1.05,
-            duration: 2000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(scale, {
-            toValue: 1,
-            duration: 2000,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    });
+    ]).start();
   }, []);
 
   const rotation = rotate.interpolate({
     inputRange: [0, 1],
-    outputRange: ['-5deg', '0deg'],
+    outputRange: ["-3deg", "0deg"],
   });
 
   return (
@@ -63,26 +57,27 @@ export default function AnimatedLogo() {
   );
 }
 
-const styles = StyleSheet.create({
-  logoBubble: {
-    width: 56,
-    height: 56,
-    borderRadius: 18,
-    backgroundColor: 'rgba(11, 30, 20, 1)',
-    borderWidth: 1,
-    borderColor: 'rgba(234, 247, 239, 0.10)',
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 10,
-    shadowColor: 'rgba(66, 230, 138, 0.5)',
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 8,
-  },
-  logo: {
-    width: 42,
-    height: 42,
-    resizeMode: "contain",
-  },
-});
+const makeStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    logoBubble: {
+      width: 56,
+      height: 56,
+      borderRadius: 18,
+      backgroundColor: theme.colors.surface,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 10,
+      shadowColor: "#000",
+      shadowOpacity: 0.25,
+      shadowRadius: 18,
+      shadowOffset: { width: 0, height: 10 },
+      elevation: 8,
+    },
+    logo: {
+      width: 42,
+      height: 42,
+      resizeMode: "contain",
+    },
+  });

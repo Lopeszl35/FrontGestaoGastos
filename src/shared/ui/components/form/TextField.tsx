@@ -2,7 +2,6 @@ import React, { forwardRef, useEffect, useMemo, useState, useRef } from "react";
 import { Animated, Text, TextInput, TextInputProps, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
-import { colors } from "../../../theme";
 import { makeTextFieldStyles } from "../../../../styles/ui/form/textFieldStyles";
 import { useShake } from "../../../../animations/useShake";
 import { useFocusGlow } from "../../../../animations/useFocusGlow";
@@ -25,48 +24,29 @@ const TextField = forwardRef<TextInput, Props>(function TextField(
   const { shakeX, shake } = useShake();
   const { glowOpacity, glowScale, onFocus: glowFocus, onBlur: glowBlur } = useFocusGlow();
 
-  // Animação do ícone
+  // Animação sutil do ícone (sem loop / sem "neon")
   const iconScale = useRef(new Animated.Value(1)).current;
-  const iconRotate = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (error) shake();
   }, [error]);
 
   useEffect(() => {
-    if (focused) {
-      Animated.sequence([
-        Animated.timing(iconScale, {
-          toValue: 1.15,
-          duration: 150,
-          useNativeDriver: true,
-        }),
-        Animated.spring(iconScale, {
-          toValue: 1,
-          useNativeDriver: true,
-          speed: 30,
-          bounciness: 10,
-        }),
-      ]).start();
-
-      Animated.timing(iconRotate, {
+    if (!focused) {
+      Animated.timing(iconScale, {
         toValue: 1,
-        duration: 300,
+        duration: 90,
         useNativeDriver: true,
       }).start();
-    } else {
-      Animated.timing(iconRotate, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
+      return;
     }
-  }, [focused]);
 
-  const iconRotation = iconRotate.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '5deg'],
-  });
+    Animated.timing(iconScale, {
+      toValue: 1.06,
+      duration: 120,
+      useNativeDriver: true,
+    }).start();
+  }, [focused, iconScale]);
 
   const wrapStyle = useMemo(() => {
     if (error) return [styles.inputWrap, styles.inputWrapError];
@@ -92,7 +72,6 @@ const TextField = forwardRef<TextInput, Props>(function TextField(
         {/* Glow effect */}
         <Animated.View
           style={[
-            styles.glowEffect,
             {
               opacity: glowOpacity,
               transform: [{ scale: glowScale }],
@@ -105,14 +84,14 @@ const TextField = forwardRef<TextInput, Props>(function TextField(
           {leftIconName ? (
             <Animated.View
               style={{
-                transform: [{ scale: iconScale }, { rotate: iconRotation }],
+                transform: [{ scale: iconScale }],
               }}
             >
               <MaterialIcons
                 name={leftIconName}
                 size={20}
                 style={styles.leftIcon}
-                color={focused ? colors.primaryB : colors.textMuted}
+                color={focused ? theme.colors.primary : theme.colors.textMuted}
               />
             </Animated.View>
           ) : null}
@@ -123,8 +102,8 @@ const TextField = forwardRef<TextInput, Props>(function TextField(
             style={styles.input}
             underlineColorAndroid="transparent"
             placeholderTextColor={styles.placeholder.color as string}
-            selectionColor={colors.primaryB}
-            cursorColor={colors.primaryB}
+            selectionColor={theme.colors.primary}
+            cursorColor={theme.colors.primary}
             autoCorrect={false}
             importantForAutofill="no"
             autoComplete="off"

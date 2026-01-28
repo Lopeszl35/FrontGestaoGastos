@@ -18,7 +18,7 @@ export type CreditCard = {
   corHex: string | null;
   diaFechamento: number;
   diaVencimento: number;
-  limiteTotal: number;
+  limite: number;
   limiteUsado: number;
   limiteDisponivel: number;
   percentualUsado: number;
@@ -32,7 +32,7 @@ export type CreditCardDetails = {
     bandeira: CreditCardBrand | null;
     ultimos4: string | null;
     corHex: string | null;
-    limiteTotal: number;
+    limite: number;
     limiteUsado: number;
     limiteDisponivel: number;
     diaFechamento: number;

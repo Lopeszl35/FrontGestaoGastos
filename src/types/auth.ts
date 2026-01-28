@@ -3,7 +3,7 @@ export type FinancialProfile = "CONSERVADOR" | "MODERADO" | "AGRESSIVO";
 export const FinancialProfileLabel: Record<FinancialProfile, string> = {
   CONSERVADOR: "Conservador",
   MODERADO: "Moderado",
-  AGRESSIVO: "Agressivo",
+  AGRESSIVO: "Arrojado",
 };
 
 export type LoginDTO = {
