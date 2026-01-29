@@ -61,7 +61,7 @@ export default function EditCardModal({ visible, onClose, onSuccess, card }: Pro
   useEffect(() => {
     if (card && visible) {
       setNome(card.nome || "");
-      setLimite(card.limite?.toString() || "");
+      setLimite(card.limiteTotal?.toString() || "");
       setDiaFechamento(card.diaFechamento?.toString() || "");
       setDiaVencimento(card.diaVencimento?.toString() || "");
       setUltimos4(card.ultimos4 || "");
@@ -160,8 +160,8 @@ export default function EditCardModal({ visible, onClose, onSuccess, card }: Pro
       if (limite.trim()) {
         const limiteCleanStr = limite.replace(/[^0-9.,]/g, "").replace(',', '.');
         const limiteFinal = parseFloat(limiteCleanStr);
-        if (!isNaN(limiteFinal) && limiteFinal !== card.limite) {
-          payload.limite = limiteFinal;
+        if (!isNaN(limiteFinal) && limiteFinal !== card.limiteTotal) {
+          payload.limiteTotal = limiteFinal;
         }
       }
       
@@ -276,7 +276,7 @@ export default function EditCardModal({ visible, onClose, onSuccess, card }: Pro
 
                 <TextField 
                   label="Limite Total (R$)"
-                  placeholder={card.limite?.toString()}
+                  placeholder={card.limiteTotal?.toString()}
                   value={limite}
                   onChangeText={setLimite}
                   keyboardType="numeric"

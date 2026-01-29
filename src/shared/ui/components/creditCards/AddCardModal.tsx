@@ -144,7 +144,7 @@ export default function AddCardModal({ visible, onClose, onSuccess }: Props) {
 
       const payload: CreateCreditCardDTO = {
         nome,
-        limite: limiteFinal,
+        limiteTotal: limiteFinal,
         diaFechamento: parseInt(diaFechamento),
         diaVencimento: parseInt(diaVencimento),
         ultimos4: ultimos4 || null,

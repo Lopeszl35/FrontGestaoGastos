@@ -129,7 +129,7 @@ export default function CreditCardDetails({ details, onEdit, onToggleStatus, onD
           <View style={styles.infoRow}>
             <MaterialIcons name="account-balance-wallet" size={18} color={theme.colors.textMuted} />
             <Text style={[styles.infoLabel, { color: theme.colors.textMuted }]}>
-              Limite Total: R$ {formatCurrency(resumoCartao.limite)}
+              Usado: R$ {formatCurrency(resumoCartao.limiteUsado)} • Disponível: R$ {formatCurrency(resumoCartao.limiteDisponivel)}
             </Text>
           </View>
         </View>

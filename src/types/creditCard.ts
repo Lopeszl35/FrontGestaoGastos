@@ -10,6 +10,25 @@ export type CreditCardBrand =
   | 'Discover'
   | 'Outro';
 
+
+export type CreditCardOverviewItem = {
+  uuid_cartao: string;
+  nome: string;
+  bandeira: string | null;
+  ultimos4: string | null;
+  corHex: string | null;
+
+  diaFechamento: number;
+  diaVencimento: number;
+
+  limiteTotal: number;
+  limiteUsado: number;
+  limiteDisponivel: number;
+  percentualUsado: number;
+
+  ativo?: boolean;
+};
+
 export type CreditCard = {
   uuid_cartao: string;
   nome: string;
@@ -18,7 +37,7 @@ export type CreditCard = {
   corHex: string | null;
   diaFechamento: number;
   diaVencimento: number;
-  limite: number;
+  limiteTotal: number;
   limiteUsado: number;
   limiteDisponivel: number;
   percentualUsado: number;
@@ -32,7 +51,7 @@ export type CreditCardDetails = {
     bandeira: CreditCardBrand | null;
     ultimos4: string | null;
     corHex: string | null;
-    limite: number;
+    limiteTotal: number;
     limiteUsado: number;
     limiteDisponivel: number;
     diaFechamento: number;
@@ -73,7 +92,7 @@ export type CreateCreditCardDTO = {
   bandeira?: CreditCardBrand | null;
   ultimos4?: string | null;
   corHex?: string | null;
-  limite: number;
+  limiteTotal: number;
   diaFechamento: number;
   diaVencimento: number;
 };

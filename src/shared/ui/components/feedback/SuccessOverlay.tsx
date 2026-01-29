@@ -11,6 +11,8 @@ import { useTheme } from "../../../theme/ThemeProvider";
 type Props = {
   visible: boolean;
   message?: string;
+  title?: string;
+  onDismiss?: () => void;
   onComplete?: () => void;
 };
 
